@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>文本转LaTex处理</title>
+  <script src="文本转LaTex.js" defer></script> 
+  <script src="方程处理.js" defer></script> 
+  <script src="分小互化.js" defer></script> 
+  <script src="表格处理.js" defer></script>
+  <script src="辅助脚本.js" defer></script>
+  <style>
+    #watermark {
+      position: fixed;
+      bottom: 5px;
+      right: 5px;
+      opacity: 0.1;
+      font-size: 20px;
+      color: black;
+      z-index: 9999;
+    }
+  </style>
+</head>
+</head>
+<body>
+  <h1>粘贴内容</h1>
+  <textarea id="inputText" rows="10" style="width: 100%;"></textarea>
+  <br>
+  <button onclick="chuliwenben()">处理文本并复制</button> <!--处理文本 -->
+  <button onclick="chulifangcheng()">处理方程并复制</button> <!--处理方程 --> 
+  <button onclick="fenxiaohuhua()">分小互化</button> <!--分小互化 --> 
+  <button onclick="biaogechuli();">表格处理并复制</button><!--处理表格 -->
+  <br>
+  <button onclick="copyText()">复制文本</button><!--复制文本 -->
+  <button onclick="chulifenduan()">处理并分段</button><!--处理并分段 -->
+  <button onclick="chuliyuandaima()">源代码处理</button><!--源代码处理 -->
+  <h2>处理后的文本：</h2>
+  <pre id="outputText" contentEditable="true" style="color: red;"></pre>
+  <div id="watermark">Design By 付登临</div><!-- 水印签名 -->
+</body>
+</html>
