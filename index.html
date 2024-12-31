@@ -2,12 +2,78 @@
 <html>
 <head>
   <title>文本转LaTex处理</title>
-  <script src="文本转LaTex.js" defer></script> 
-  <script src="方程处理.js" defer></script> 
-  <script src="分小互化.js" defer></script> 
-  <script src="表格处理.js" defer></script>
-  <script src="辅助脚本.js" defer></script>
+  <script src="文本转LaTex.js"></script> 
+  <script src="方程处理.js"></script> 
+  <script src="分小互化.js"></script> 
+  <script src="表格处理.js"></script>
+  <script src="辅助脚本.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+    #content {
+      display: flex;
+      width: 90%;
+      height: 80%;
+    }
+    .box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 45%;
+      height: 100%;
+    }
+    textarea, pre {
+      flex-grow: 1;
+      resize: horizontal;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 10px 0;
+      width: 100%;
+    }
+    pre {
+      border: 1px solid #ccc;
+      color: #333; /* 重置为默认颜色 */
+      font-family: monospace;
+      background: #f4f4f4;
+      padding: 10px;
+      overflow: auto;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+    }
+    button {
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #026aa7;
+    }
     #watermark {
       position: fixed;
       bottom: 5px;
@@ -19,21 +85,27 @@
     }
   </style>
 </head>
-</head>
 <body>
-  <h1>粘贴内容</h1>
-  <textarea id="inputText" rows="10" style="width: 100%;"></textarea>
-  <br>
-  <button onclick="chuliwenben()">处理文本并复制</button> <!--处理文本 -->
-  <button onclick="chulifangcheng()">处理方程并复制</button> <!--处理方程 --> 
-  <button onclick="fenxiaohuhua()">分小互化</button> <!--分小互化 --> 
-  <button onclick="biaogechuli();">表格处理并复制</button><!--处理表格 -->
-  <br>
-  <button onclick="copyText()">复制文本</button><!--复制文本 -->
-  <button onclick="chulifenduan()">处理并分段</button><!--处理并分段 -->
-  <button onclick="chuliyuandaima()">源代码处理</button><!--源代码处理 -->
-  <h2>处理后的文本：</h2>
-  <pre id="outputText" contentEditable="true" style="color: red;"></pre>
-  <div id="watermark">Design By 付登临</div><!-- 水印签名 -->
+  <h1>文本转LaTex处理</h1>
+  <div id="content">
+    <div class="box">
+      <h2>原始文本</h2>
+      <textarea id="inputText"></textarea>
+    </div>
+    <div class="button-container">
+      <button onclick="chuliwenben()">处理文本并复制</button>
+      <button onclick="chulifangcheng()">处理方程并复制</button>
+      <button onclick="fenxiaohuhua()">分小互化</button>
+      <button onclick="biaogechuli();">表格处理并复制</button>
+      <button onclick="copyText()">复制文本</button>
+      <button onclick="chulifenduan()">处理并分段</button>
+      <button onclick="chuliyuandaima()">源代码处理</button>
+    </div>
+    <div class="box">
+      <h2>LaTex 文本</h2>
+      <pre id="outputText" class="language-latex" contentEditable="true"></pre>
+    </div>
+  </div>
+  <div id="watermark">Design By 付登临</div>
 </body>
 </html>
