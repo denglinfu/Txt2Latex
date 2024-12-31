@@ -26,33 +26,47 @@
       display: flex;
       width: 90%;
       height: 80%;
+      position: relative;
     }
     .box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 45%;
       height: 100%;
+      overflow: hidden;
+      position: relative; /* 为了包含 resizer */
+    }
+    .input-box {
+      width: 30%; /* 初始宽度 */
+      min-width: 50px;
+      position: relative;
+    }
+    .buttons {
+      width: 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+      background-color: #f4f4f4; /* 确保按钮背景与页面一致 */
+    }
+    .output-box {
+      width: calc(60% - 2px); /* 减去边框宽度 */
+      min-width: 50px;
     }
     textarea, pre {
       flex-grow: 1;
-      resize: horizontal;
+      resize: none;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       margin: 10px 0;
       width: 100%;
+      box-sizing: border-box;
     }
     pre {
       border: 1px solid #ccc;
       color: red; /* 保持红色文字显示 */
-    }
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin: 10px;
     }
     button {
       background-color: #0288d1;
@@ -76,16 +90,27 @@
       color: black;
       z-index: 9999;
     }
+    .resizer {
+      width: 10px;
+      height: 10px;
+      background: #ccc;
+      border-radius: 50%;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      cursor: ew-resize; /* 左右调整 */
+    }
   </style>
 </head>
 <body>
   <h1>文本转LaTex处理</h1>
   <div id="content">
-    <div class="box">
+    <div class="box input-box">
       <h2>原始文本</h2>
       <textarea id="inputText"></textarea>
+      <div class="resizer"></div>
     </div>
-    <div class="button-container">
+    <div class="button-container buttons">
       <button onclick="chuliwenben()">处理文本并复制</button>
       <button onclick="chulifangcheng()">处理方程并复制</button>
       <button onclick="fenxiaohuhua()">分小互化</button>
@@ -94,11 +119,40 @@
       <button onclick="chulifenduan()">处理并分段</button>
       <button onclick="chuliyuandaima()">源代码处理</button>
     </div>
-    <div class="box">
+    <div class="box output-box">
       <h2>LaTex 文本</h2>
       <pre id="outputText" contentEditable="true"></pre>
     </div>
   </div>
   <div id="watermark">Design By 付登临</div>
+  <script>
+    const content = document.getElementById('content');
+    const resizer = document.querySelector('.resizer');
+    const inputBox = document.querySelector('.input-box');
+    const buttons = document.querySelector('.buttons');
+    const outputBox = document.querySelector('.output-box');
+    let isResizing = false;
+
+    const mouseMoveHandler = (e) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX - content.offsetLeft;
+      const buttonsWidth = buttons.offsetWidth;
+      const maxWidth = content.clientWidth - buttonsWidth - 50; // 50 is minimum width for boxes
+      if (newWidth > 50 && newWidth < maxWidth) {
+        inputBox.style.width = `${newWidth}px`;
+        outputBox.style.width = `calc(100% - ${newWidth + buttonsWidth}px)`;
+      }
+    };
+
+    resizer.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isResizing = true;
+      window.addEventListener('mousemove', mouseMoveHandler);
+      window.addEventListener('mouseup', () => {
+        isResizing = false;
+        window.removeEventListener('mousemove', mouseMoveHandler);
+      });
+    });
+  </script>
 </body>
 </html>
