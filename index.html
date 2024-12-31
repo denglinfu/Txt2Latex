@@ -71,12 +71,16 @@
     }
     pre.latex-highlight {
       display: block;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      white-space: pre-wrap !important; /* 确保内容自动换行 */
+      word-wrap: break-word !important; /* 确保内容自动换行 */
       border: none;
       background-color: transparent;
     }
-
+    pre#outputText {
+      overflow-wrap: break-word; /* 确保长文本自动换行 */
+      white-space: pre-wrap !important; /* 确保内容自动换行 */
+      word-wrap: break-word !important; /* 确保内容自动换行 */
+    }
     button {
       background-color: #0288d1;
       color: white;
@@ -162,6 +166,12 @@
         window.removeEventListener('mousemove', mouseMoveHandler);
       });
     });
+
+    // 确保输出框内容自动换行
+    const outputText = document.getElementById("outputText");
+    outputText.style.whiteSpace = "pre-wrap";
+    outputText.style.wordWrap = "break-word";
+    outputText.style.overflowWrap = "break-word";
   </script>
 </body>
 </html>
