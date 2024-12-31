@@ -32,6 +32,10 @@ function chulifangcheng() {
     let addDollarSignsText = addDollarSigns1(addsplitText);
     let finalText = denghaochuli(addDollarSignsText);
 
-    document.getElementById('outputText').innerText = finalText;
+    // 将处理后的文本更新到页面上
+    const outputElement = document.getElementById('outputText');
+    outputElement.innerHTML = `<pre class="latex-highlight">${finalText}</pre>`;  
+    // 进行代码高亮
+    highlightTex();
     copyText();
 }
