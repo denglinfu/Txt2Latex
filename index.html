@@ -7,6 +7,11 @@
   <script src="分小互化.js" defer></script> 
   <script src="表格处理.js" defer></script>
   <script src="辅助脚本.js" defer></script> 
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/languages/latex.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -64,10 +69,14 @@
       width: 100%;
       box-sizing: border-box;
     }
-    pre {
-      border: 1px solid #ccc;
-      color: red; /* 保持红色文字显示 */
+    pre.latex-highlight {
+      display: block;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: none;
+      background-color: transparent;
     }
+
     button {
       background-color: #0288d1;
       color: white;
