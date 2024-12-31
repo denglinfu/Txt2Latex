@@ -2,14 +2,11 @@
 <html>
 <head>
   <title>文本转LaTex处理</title>
-  <script src="文本转LaTex.js"></script> 
-  <script src="方程处理.js"></script> 
-  <script src="分小互化.js"></script> 
-  <script src="表格处理.js"></script>
-  <script src="辅助脚本.js"></script>
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
+  <script src="文本转LaTex.js" defer></script> 
+  <script src="方程处理.js" defer></script> 
+  <script src="分小互化.js" defer></script> 
+  <script src="表格处理.js" defer></script>
+  <script src="辅助脚本.js" defer></script> 
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,11 +45,7 @@
     }
     pre {
       border: 1px solid #ccc;
-      color: #333; /* 重置为默认颜色 */
-      font-family: monospace;
-      background: #f4f4f4;
-      padding: 10px;
-      overflow: auto;
+      color: red; /* 保持红色文字显示 */
     }
     .button-container {
       display: flex;
@@ -103,7 +96,7 @@
     </div>
     <div class="box">
       <h2>LaTex 文本</h2>
-      <pre id="outputText" class="language-latex" contentEditable="true"></pre>
+      <pre id="outputText" contentEditable="true"></pre>
     </div>
   </div>
   <div id="watermark">Design By 付登临</div>
