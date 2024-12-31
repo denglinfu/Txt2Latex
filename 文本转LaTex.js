@@ -140,10 +140,9 @@ function chuliwenben() {
     let finalText = addDollarSigns(processedText);
     
     // 将处理后的文本更新到页面上
-    document.getElementById('outputText').innerText = finalText;
-    // 执行拷贝文本的操作（假设已实现 copyText 函数）
+    const outputElement = document.getElementById('outputText');
+    outputElement.innerHTML = `<pre class="latex-highlight">${finalText}</pre>`;  
+    // 进行代码高亮
+    highlightTex();
     copyText();
-    
-    // 输出最终处理的 LaTeX 文本
-    console.log('Processed LaTeX Text:', finalText);
 }
