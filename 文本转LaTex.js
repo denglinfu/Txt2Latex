@@ -48,8 +48,8 @@ function processTextToLaTeX(line) {
     line = line.replace(/([\d]+)\s*\\over\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
     line = line.replace(/([\d]+)\s*\\over\s*([\d]+)/g, '\\dfrac{$1}{$2}');
     // 删除多余空格
-    line = line.replace(/ /g, '');
-    line = line.replace(/　/g, '');
+    line = line.replace(/\s/g, '');
+
     line = line.replace(/ /g, '');
     line = line.replace(/ /g, '');
     // 替换特殊符号和标点符号
