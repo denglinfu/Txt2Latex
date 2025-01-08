@@ -18,7 +18,7 @@ function addDollarSigns(text) {
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
         // 使用正则表达式在每个指定区域两边添加 $$ 符号
-        line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.+\-\_\^△□○★▲●◆=\{\}\s\%\:\/π]+)/g, '$$$1$$');
+        line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★▲●◆=\{\}\s\%\:\/π\w]+)/g, '$$$1$$');
         // 如果行尾是单一的“.$”字符，移除最后的 $
         if (line.endsWith('.$')) {
             line = line.slice(0, -1);
@@ -48,7 +48,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/([\d]+)\s*\\over\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
     line = line.replace(/([\d]+)\s*\\over\s*([\d]+)/g, '\\dfrac{$1}{$2}');
     // 删除多余空格
-    line = line.replace(/\s/g, '');
+    line = line.replace(/[^\S\n]+/g, '');
 
     line = line.replace(/ /g, '');
     line = line.replace(/ /g, '');
@@ -67,6 +67,9 @@ function processTextToLaTeX(line) {
     line = line.replace(/］/g, ']');
     line = line.replace(/,/g, '，');
     line = line.replace(/\.$/g, '。');
+
+    // 添加将(a，b)类型替换为(a,b)的逻辑
+    line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');
 
     // 使用递归函数替换含有中文字符括号内容
     function replaceBrackets(line) {
@@ -114,6 +117,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/\\dot/g, '\\overset{\\bullet}');
     line = line.replace(/π/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
+
     // 替换单位并转换为 LaTeX 格式
     const units = ['km/h','m/s','m/min','mm', 'cm', 'dm', 'm', 'km', 'g', 'kg', 't', 's', 'min', 'h', 'mL', 'L', 'ml'];
 
