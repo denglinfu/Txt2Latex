@@ -126,6 +126,11 @@ function processTextToLaTeX(line) {
         line = line.replace(regex, '$1\\rm\\ {$3}');
     });
 
+    units.forEach(unit => {
+        const regex = new RegExp(`\\\\left\\(${unit}(\\^\\d+)?\\\\right\\)`, 'g');
+        line = line.replace(regex, `\\left(\\rm {${unit}$1}\\right)`);
+    });
+
     return line;
 }
 
