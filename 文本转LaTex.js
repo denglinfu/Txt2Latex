@@ -44,9 +44,9 @@ function processTextToLaTeX(line) {
     line = line.replace(/\\tfrac/g, '\\dfrac');
     // 替换 "{...} \over {...}" 分数格式为 \dfrac
     line = line.replace(/{(.*?)}\s*\\over\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
-    line = line.replace(/{(.*?)}\s*\\over\s*([\d]+)/g, '\\dfrac{$1}{$2}');
-    line = line.replace(/([\d]+)\s*\\over\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
-    line = line.replace(/([\d]+)\s*\\over\s*([\d]+)/g, '\\dfrac{$1}{$2}');
+    line = line.replace(/{(.*?)}\s*\\over\s*(.*?)/g, '\\dfrac{$1}{$2}');
+    line = line.replace(/(.*?)\s*\\over\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
+    line = line.replace(/(.*?)\s*\\over\s*(.*?)/g, '\\dfrac{$1}{$2}');
     // 删除多余空格
     line = line.replace(/[^\S\n]+/g, '');
 
@@ -96,8 +96,8 @@ function processTextToLaTeX(line) {
     line = line.replace(/\)/g, '\\right)');
     line = line.replace(/\[/g, '\\left[');
     line = line.replace(/\]/g, '\\right]');
-    line = line.replace(/(\d+)@(\d+)\/(\d+)/g, '$1\\dfrac{$2}{$3}');
-    line = line.replace(/(\d+)\/(\d+)/g, '\\dfrac{$1}{$2}');
+    line = line.replace(/([a-zA-Z0-9]+)@([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '$1\\dfrac{$2}{$3}');
+    line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '\\dfrac{$1}{$2}');
     line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
     line = line.replace(/>/g, '\\gt ');
     line = line.replace(/</g, '\\lt ');
