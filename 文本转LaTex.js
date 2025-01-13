@@ -98,6 +98,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/\]/g, '\\right]');
     line = line.replace(/(\d+)@(\d+)\/(\d+)/g, '$1\\dfrac{$2}{$3}');
     line = line.replace(/(\d+)\/(\d+)/g, '\\dfrac{$1}{$2}');
+    line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}/g, '\\dfrac{$1}{$2}');
     line = line.replace(/>/g, '\\gt ');
     line = line.replace(/</g, '\\lt ');
     line = line.replace(/≠/g, '\\not= ');
