@@ -1,15 +1,26 @@
 // 处理换行符
+/**
+ * 处理文本中的换行符
+ * @param {string} text - 输入的文本
+ * @returns {string} - 处理后的文本
+ */
 function processLineBreaks(text) {
     // 将输入文本按换行符分割成多行
     let lines = text.split('\n');
 
     // 将多行文本重新拼接成文本（这里是实际中已不再调用 processLine 函数）
+    // 注释：这里可能存在逻辑错误，因为直接将分割后的行重新拼接，没有进行任何处理
     text = lines.join('\n');
 
     return text;
 }
 
 // 分组增加 $$ 符号
+/**
+ * 在指定的文本区域两边添加 LaTeX 数学模式符号 ($$)
+ * @param {string} text - 需要处理的文本
+ * @returns {string} - 处理后的文本
+ */
 function addDollarSigns(text) {
     // 将输入文本按照换行符分割成多行
     let lines = text.split('\n');
@@ -18,8 +29,10 @@ function addDollarSigns(text) {
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
         // 使用正则表达式在每个指定区域两边添加 $$ 符号
+        // 匹配的区域包括：方括号、数字、字母、括号、反斜杠、标点符号、数学符号、空格、百分号、冒号、斜杠、希腊字母π和单词字符
         line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★▲●◆=\{\}\s\%\:\/π\w]+)/g, '$$$1$$');
         // 如果行尾是单一的“.$”字符，移除最后的 $
+        // 这可能是为了避免在句子末尾的句号前添加不必要的 $ 符号
         if (line.endsWith('.$')) {
             line = line.slice(0, -1);
         }
@@ -33,6 +46,11 @@ function addDollarSigns(text) {
 }
 
 // 处理文本为 LaTeX 格式
+/**
+ * 将文本内容转换为 LaTeX 格式
+ * @param {string} line - 需要处理的文本行
+ * @returns {string} - 转换后的 LaTeX 格式文本
+ */
 function processTextToLaTeX(line) {
     // 删除已有的 $ 符号
     line = line.replace(/\$/g, '');
@@ -49,9 +67,10 @@ function processTextToLaTeX(line) {
     line = line.replace(/(.*?)\s*\\over\s*(.*?)/g, '\\dfrac{$1}{$2}');
     // 删除多余空格
     line = line.replace(/[^\S\n]+/g, '');
-
     line = line.replace(/ /g, '');
     line = line.replace(/ /g, '');
+    // 删除 \rm 关键字
+    line = line.replace(/\\rm/g, '');
     // 替换特殊符号和标点符号
     line = line.replace(/##/g, '或');
     line = line.replace(/：/g, ':');
@@ -73,7 +92,8 @@ function processTextToLaTeX(line) {
 
     // 替换中括号和小括号
     line = replaceBrackets(line);
-
+    // 处理单位
+    line = convertUnits(line);
     // 为空括号和空方括号增加空白
     line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ )');
     line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ ]');
@@ -106,10 +126,9 @@ function processTextToLaTeX(line) {
     line = line.replace(/\\dot/g, '\\overset{\\bullet}');
     line = line.replace(/π/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
-    line = convertUnits(line);
     return line;
 }
-    // 使用递归函数替换含有中文字符括号内容
+// 使用递归函数替换含有中文字符括号内容
 function replaceBrackets(line) {
     function replaceRecursive(str) {
         return str.replace(/\(([^()]*[\u4e00-\u9fff][^()]*)\)/g, '（$1）');
