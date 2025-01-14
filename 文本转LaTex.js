@@ -71,19 +71,7 @@ function processTextToLaTeX(line) {
     // 添加将(a，b)类型替换为(a,b)的逻辑
     line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');
 
-    // 使用递归函数替换含有中文字符括号内容
-    function replaceBrackets(line) {
-        function replaceRecursive(str) {
-            return str.replace(/\(([^()]*[\u4e00-\u9fff][^()]*)\)/g, '（$1）');
-        }
-
-        while (/\(([^()]*[\u4e00-\u9fff][^()]*)\)/.test(line)) {
-            line = replaceRecursive(line);
-        }
-
-        return line;
-    }
-
+    // 替换中括号和小括号
     line = replaceBrackets(line);
 
     // 为空括号和空方括号增加空白
@@ -118,20 +106,60 @@ function processTextToLaTeX(line) {
     line = line.replace(/\\dot/g, '\\overset{\\bullet}');
     line = line.replace(/π/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
+    line = convertUnits(line);
+    return line;
+}
+    // 使用递归函数替换含有中文字符括号内容
+function replaceBrackets(line) {
+    function replaceRecursive(str) {
+        return str.replace(/\(([^()]*[\u4e00-\u9fff][^()]*)\)/g, '（$1）');
+    }
 
-    // 替换单位并转换为 LaTeX 格式
-    const units = ['km/h','m/s','m/min','mm', 'cm', 'dm', 'm', 'km', 'g', 'kg', 't', 's', 'min', 'h', 'mL', 'L', 'ml'];
+    while (/\(([^()]*[\u4e00-\u9fff][^()]*)\)/.test(line)) {
+        line = replaceRecursive(line);
+    }
 
-    units.forEach(unit => {
-        const regex = new RegExp(`(\\d+(\\.\\d+)?)(\\s*\\(?\\（?\\s*${unit}(\\^([23]))?\\s*\\)?\\）?\\s*)`, 'g');
-        line = line.replace(regex, '$1\\rm\\ {$3}');
+    return line;
+}
+
+
+const units = ['km/h', 'm/s', 'm/min', 'mm', 'cm', 'dm', 'm', 'km', 'g', 'kg', 't', 's', 'min', 'h', 'mL', 'L', 'ml'];
+
+// 按长度排序，确保先匹配较长的单位
+const sortedUnits = units.sort((a, b) => b.length - a.length);
+
+function convertUnits(line) {
+    // 临时标记已转换的内容
+    let counter = 0;
+    const placeholders = new Map();
+    
+    // 第一轮替换：处理数字/汉字/字母后面的单位
+    sortedUnits.forEach(unit => {
+        const regex = new RegExp(
+            `([\\u4e00-\\u9fa5a-zA-Z0-9]\\s*)(\\(?\\（?\\s*${unit}(\\^([23]))?\\s*\\)?\\）?\\s*)`, 
+            'g'
+        );
+        
+        line = line.replace(regex, (match, prefix, unitPart) => {
+            const placeholder = `__UNIT_${counter}__`;
+            counter++;
+            const converted = `${prefix}\\rm\\ {${unitPart}}`;
+            placeholders.set(placeholder, converted);
+            return placeholder;
+        });
     });
-
-    units.forEach(unit => {
+    
+    // 第二轮替换：处理括号中的单位
+    sortedUnits.forEach(unit => {
         const regex = new RegExp(`\\\\left\\(${unit}(\\^\\d+)?\\\\right\\)`, 'g');
         line = line.replace(regex, `\\left(\\rm {${unit}$1}\\right)`);
     });
-
+    
+    // 恢复占位符
+    placeholders.forEach((value, key) => {
+        line = line.replace(key, value);
+    });
+    
     return line;
 }
 
@@ -142,7 +170,7 @@ function chuliwenben() {
     
     // 处理文本为 LaTeX 格式
     let latexText = processTextToLaTeX(inputText);
-    
+
     // 处理换行符
     let processedText = processLineBreaks(latexText);
     
