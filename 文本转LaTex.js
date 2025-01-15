@@ -160,7 +160,7 @@ function convertUnits(line) {
         line = line.replace(regex, (match) => {
             const placeholder = `__UNIT_${counter}__`;
             counter++;
-            const converted = match.replace(unit, `\\rm\\ {${unit}}`);
+            const converted = match.replace(unit, `\\rm{${unit}}`);
             placeholders.set(placeholder, converted);
             return placeholder;
         });
