@@ -126,6 +126,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/∥/g, '∥');
     line = line.replace(/\\dot/g, '\\overset{\\bullet}');
     line = line.replace(/π/g, '\\mathrm{π}');
+    line = line.replace(/\\pi/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
     line = line.replace(/\\dfrac\{m\}\{mi\}n/g, 'm/min');
     return line;
