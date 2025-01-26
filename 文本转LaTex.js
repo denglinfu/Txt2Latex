@@ -129,6 +129,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/\\pi/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
     line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ ');
+    line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min');
     return line;
 }
 // 使用递归函数替换含有中文字符括号内容
