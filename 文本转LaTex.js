@@ -128,7 +128,7 @@ function processTextToLaTeX(line) {
     line = line.replace(/π/g, '\\mathrm{π}');
     line = line.replace(/\\pi/g, '\\mathrm{π}');
     line = line.replace(/±/g, '\\pm ');
-    line = line.replace(/\\dfrac\{m\}\{mi\}n/g, 'm/min');
+    line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ ');
     return line;
 }
 // 使用递归函数替换含有中文字符括号内容
@@ -147,50 +147,30 @@ function replaceBrackets(line) {
 
 const units = ['km/h', 'm/s', 'm/min', 'mm', 'cm', 'dm', 'm', 'km', 'g', 'kg', 't', 's', 'min', 'h', 'mL', 'L', 'ml'];
 
-// 按长度排序，确保先匹配较长的单位
-const sortedUnits = units.sort((a, b) => b.length - a.length);
-
 function convertUnits(line) {
-    // 临时标记已转换的内容
-    let counter = 0;
-    const placeholders = new Map();
+    // 处理括号内的单位（带^指数）
+    line = line.replace(/\((\s*)([a-zA-Z\/]+)(\^[0-9]+)?(\s*)\)/g, (_, p1, unit, exp, p4) => {
+        return `${p1}(\\rm{${unit}${exp || ''}})${p4}`;
+    });
+
+    // 处理数字后的单位（带^指数）
+    line = line.replace(/(\d+)(\s*)([a-zA-Z\/]+)(\^[0-9]+)?/g, (_, num, space, unit, exp) => {
+        return `${num}\\rm{${unit}${exp || ''}}`;
+    });
+
+    // 处理单独的单位（非数字后），排除已处理的\rm{}
+    const unitPattern = new RegExp(
+        `(\\\\rm\\{[^}]*})|\\b(${units.sort((a, b) => b.length - a.length).join('|')})(\\^\\d+)?\\b`,
+        'g'
+    );
     
-    // 提前处理括号中的单位，并用占位符进行占位
-    sortedUnits.forEach(unit => {
-        const regex = new RegExp(`\\(\\s*${unit}(\\^\\d+)?\\s*\\)`, 'g');
-        line = line.replace(regex, (match) => {
-            const placeholder = `__UNIT_${counter}__`;
-            counter++;
-            const converted = match.replace(unit, `\\rm{${unit}}`);
-            placeholders.set(placeholder, converted);
-            return placeholder;
-        });
+    return line.replace(unitPattern, (match, rmGroup, unit, exp) => {
+        if (rmGroup) {
+            return rmGroup; // 跳过已处理的部分
+        }
+        return `\\rm{${unit}${exp || ''}}`;
     });
-
-    // 第一轮替换：处理数字/汉字/字母/括号后的单位
-    sortedUnits.forEach(unit => {
-        const regex = new RegExp(
-            `([\\u4e00-\\u9fa5a-zA-Z0-9)\\d])\\s*(${unit})(\\^([23]))?\\s*`,
-            'g'
-        );
-
-        line = line.replace(regex, (match, prefix, unitPart, exp) => {
-            const placeholder = `__UNIT_${counter}__`;
-            counter++;
-            const converted = `${prefix}\\rm\\ {${unitPart}}${exp || ''}`;
-            placeholders.set(placeholder, converted);
-            return placeholder;
-        });
-    });
-
-    // 恢复占位符
-    placeholders.forEach((value, key) => {
-        line = line.replace(key, value);
-    });
-
-    return line;
 }
-
 
 // 主处理函数
 function chuliwenben() {
