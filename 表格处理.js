@@ -21,12 +21,8 @@ function biaogechuli() {
     let finalText = addDollarSigns1(addboxText);
     
     // 将处理后的文本更新到页面上
-    const outputElement = document.getElementById('outputText');
-    outputElement.innerHTML = `<pre class="latex-highlight">${finalText}</pre>`;  
-    // 进行代码高亮
-    highlightTex();
+    const output = document.getElementById('outputText');
+    output.textContent = finalText; // 保持为纯文本 
     copyText();
     
 }
-
-// 注意：确保 `processTextToLaTeX`, `processLineBreaks`, `addDollarSigns1`, 和 `copyText` 已经在你的代码的其他地方定义了。

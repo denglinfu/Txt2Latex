@@ -30,8 +30,3 @@
       text = text.replace(/\$\$/g, '$'); // 替换公式开始和结束标示符
       inputText.value = text;
     }
-    function highlightTex() {
-      document.querySelectorAll('pre').forEach((block) => {
-        hljs.highlightElement(block);
-      });
-    }    

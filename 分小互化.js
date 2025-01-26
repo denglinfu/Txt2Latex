@@ -1,42 +1,96 @@
+function gcd(a, b) {
+    return b ? gcd(b, a % b) : a;
+}
+
+function processMixedNumber(inputStr) {
+    const [wholeStr, fractionStr] = inputStr.split('@');
+    const whole = parseInt(wholeStr, 10);
+    let [num, denom] = fractionStr.split('/').map(Number);
+    
+    // 约分分数部分
+    const fracGcd = gcd(num, denom);
+    num /= fracGcd;
+    denom /= fracGcd;
+
+    const totalNum = whole * denom + num;
+    const totalGcd = gcd(totalNum, denom);
+    const simplifiedNum = totalNum / totalGcd;
+    const simplifiedDenom = denom / totalGcd;
+
+    return {
+        decimal: whole + num / denom,
+        fraction: `\\dfrac{${simplifiedNum}}{${simplifiedDenom}}`,
+        mixed: `${whole}\\dfrac{${num}}{${denom}}`
+    };
+}
+
+function processFraction(inputStr) {
+    let [num, denom] = inputStr.split('/').map(Number);
+    const fracGcd = gcd(num, denom);
+    num /= fracGcd;
+    denom /= fracGcd;
+
+    const decimal = num / denom;
+    const whole = Math.floor(num / denom);
+    const remainder = num % denom;
+
+    let mixed = '无';
+    if (num >= denom) {
+        mixed = remainder === 0 ? `${whole}` : `${whole}\\dfrac{${remainder}}{${denom}}`;
+    }
+
+    return {
+        decimal,
+        fraction: `\\dfrac{${num}}{${denom}}`,
+        mixed
+    };
+}
+
+function processDecimal(inputStr) {
+    const decimal = parseFloat(inputStr);
+    const [integerPart, decimalPart = ''] = decimal.toString().split('.');
+    const wholeNumber = parseInt(integerPart, 10) || 0;
+
+    let num = decimalPart ? parseInt(decimalPart, 10) : 0;
+    let denom = decimalPart ? Math.pow(10, decimalPart.length) : 1;
+
+    // 约分小数部分
+    const decGcd = gcd(num, denom);
+    num /= decGcd;
+    denom /= decGcd;
+
+    const totalNum = wholeNumber * denom + num;
+    const totalGcd = gcd(totalNum, denom);
+    const simplifiedNum = totalNum / totalGcd;
+    const simplifiedDenom = denom / totalGcd;
+
+    let mixed = '无';
+    if (wholeNumber !== 0) {
+        mixed = num === 0 ? `${wholeNumber}` : `${wholeNumber}\\dfrac{${num}}{${simplifiedDenom}}`;
+    }
+
+    return {
+        decimal: decimal,
+        fraction: `\\dfrac{${simplifiedNum}}{${simplifiedDenom}}`,
+        mixed: mixed
+    };
+}
+
 function processNumber(inputStr) {
-    let outputText = document.getElementById('outputText');
     if (inputStr.includes('@')) {
-        // 带分数形式
-        let [whole, frac] = inputStr.split('@');
-        let [num, denom] = frac.split('/').map(Number);
-        let decimal = parseInt(whole) + num / denom;
-        outputText.innerText = `小数：${decimal}\n分数：\\dfrac{${num + denom * parseInt(whole)}}{${denom}}\n带分数：${whole}\\dfrac{${num}}{${denom}}`;
+        return processMixedNumber(inputStr);
     } else if (inputStr.includes('/')) {
-        // 分数形式
-        let [num, denom] = inputStr.split('/').map(Number);
-        let decimal = num / denom;
-        if (num < denom) {
-            outputText.innerText = `小数：${decimal}\n分数：\\dfrac{${num}}{${denom}}\n带分数：无`;
-        } else {
-            let whole = Math.floor(num / denom);
-            num = num % denom;
-            outputText.innerText = `小数：${decimal}\n分数：\\dfrac{${num}}{${denom}}\n带分数：${whole}\\dfrac{${num}}{${denom}}`;
-        }
+        return processFraction(inputStr);
     } else {
-        // 小数形式
-        let decimal = parseFloat(inputStr);
-        let [integerPart, decimalPart] = decimal.toString().split('.');
-        let num = parseInt(decimalPart);
-        let denom = Math.pow(10, decimalPart.length);
-        let gcd = (a, b) => b ? gcd(b, a % b) : a;
-        let divisor = gcd(num, denom);
-        num /= divisor;
-        denom /= divisor;
-        if (parseInt(integerPart) === 0) {
-            outputText.innerText = `小数：${decimal}\n分数：\\dfrac{${num}}{${denom}}\n带分数：无`;
-        } else {
-            let whole = parseInt(integerPart);
-            outputText.innerText = `小数：${decimal}\n分数：\\dfrac{${num + denom * whole}}{${denom}}\n带分数：${whole}\\dfrac{${num}}{${denom}}`;
-        }
+        return processDecimal(inputStr);
     }
 }
 
 function fenxiaohuhua() {
     let inputText = document.getElementById('inputText').value;
-    processNumber(inputText);
+    const result = processNumber(inputText);
+    const output = document.getElementById('outputText');
+    
+    // 拼接最终结果（保持 LaTeX 格式）
+    output.textContent = `小数：${result.decimal}\n分数：${result.fraction}\n带分数：${result.mixed}`;
 }

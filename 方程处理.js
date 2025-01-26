@@ -14,7 +14,7 @@ function addsplit(text) {
             latex += ' \\\\ \n';
         }
     });
-    latex += '\\end{split}';
+    latex += '\n\\end{split}';
     return latex;
 }
 
@@ -33,9 +33,7 @@ function chulifangcheng() {
     let finalText = denghaochuli(addDollarSignsText);
 
     // 将处理后的文本更新到页面上
-    const outputElement = document.getElementById('outputText');
-    outputElement.innerHTML = `<pre class="latex-highlight">${finalText}</pre>`;  
-    // 进行代码高亮
-    highlightTex();
+    const output = document.getElementById('outputText');
+    output.textContent = finalText; // 保持为纯文本 
     copyText();
 }

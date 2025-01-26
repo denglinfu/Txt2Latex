@@ -207,9 +207,8 @@ function chuliwenben() {
     let finalText = addDollarSigns(processedText);
     
     // 将处理后的文本更新到页面上
-    const outputElement = document.getElementById('outputText');
-    outputElement.innerHTML = `<pre class="latex-highlight">${finalText}</pre>`;  
+    const output = document.getElementById('outputText');
+    output.textContent = finalText; // 保持为纯文本 
     // 进行代码高亮
-    highlightTex();
     copyText();
 }
