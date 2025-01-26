@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaTeX文本处理工具 - 稳定换行版</title>
+    <title>LaTeX文本处理工具</title>
     <!-- 样式表 -->
     <link rel="stylesheet" href="styles.css">
     <!-- 依赖库 -->
@@ -19,10 +19,13 @@
     <script src="main.js" defer></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div class="header-container">
             <h1>LaTeX文本处理工具</h1>
-            <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
+            <div class="header-buttons">
+                <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
+                <button onclick="toggleTempStorage()" class="temp-storage-btn">📦 暂存内容</button>
+            </div>
         </div>
         
         <div class="toolbar">
@@ -55,6 +58,14 @@
                 </div>
                 <div id="historyList" class="history-list"></div>
             </div>
+        </div>
+
+        <div id="tempStoragePanel" class="temp-storage-panel">
+            <div class="temp-storage-header">
+                <h3>暂存内容</h3>
+                <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
+            </div>
+            <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
         </div>
     </div>
 

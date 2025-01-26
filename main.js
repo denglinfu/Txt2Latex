@@ -152,6 +152,38 @@ function toggleHistory() {
     }
 }
 
+function toggleTempStorage() {
+    const panel = document.getElementById('tempStoragePanel');
+    panel.classList.toggle('active');
+}
+
+function clearTempStorage() {
+    const tempStorage = document.getElementById('tempStorageArea');
+    tempStorage.value = '';
+}
+
+// 修改现有的点击空白处关闭面板的事件监听器
+document.addEventListener('click', (e) => {
+    const historyPanel = document.getElementById('historyPanel');
+    const historyBtn = document.querySelector('.history-btn');
+    const tempStoragePanel = document.getElementById('tempStoragePanel');
+    const tempStorageBtn = document.querySelector('.temp-storage-btn');
+    
+    // 处理历史记录面板
+    if (historyPanel.classList.contains('active') && 
+        !historyPanel.contains(e.target) && 
+        !historyBtn.contains(e.target)) {
+        historyPanel.classList.remove('active');
+    }
+    
+    // 处理暂存内容面板
+    if (tempStoragePanel.classList.contains('active') && 
+        !tempStoragePanel.contains(e.target) && 
+        !tempStorageBtn.contains(e.target)) {
+        tempStoragePanel.classList.remove('active');
+    }
+});
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     handle.addEventListener('mousedown', initResize);

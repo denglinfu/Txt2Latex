@@ -259,4 +259,80 @@ button:active {
     .toolbar {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* 暂存内容面板样式 */
+.temp-storage-panel {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.temp-storage-panel.active {
+    left: 0;
+}
+
+.temp-storage-header {
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#tempStorageArea {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    resize: none;
+    font-family: 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background: #fafafa;
+}
+
+.clear-temp-storage {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background: rgba(255,255,255,0.2);
+}
+
+.temp-storage-btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background: rgba(2, 136, 209, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.temp-storage-btn:hover {
+    background: rgba(2, 136, 209, 0.2);
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.history-btn,
+.temp-storage-btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background: rgba(2, 136, 209, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.history-btn:hover,
+.temp-storage-btn:hover {
+    background: rgba(2, 136, 209, 0.2);
 } 
