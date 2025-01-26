@@ -47,6 +47,13 @@
             padding: 0 15px;
         }
 
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .toolbar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -192,11 +199,93 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* 历史记录面板样式 */
+        .history-panel {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-panel.active {
+            right: 0;
+        }
+
+        .history-header {
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #f0f0f0;
+        }
+
+        .history-item-time {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .history-item-preview {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .clear-history {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .history-btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            background: rgba(2, 136, 209, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .history-btn:hover {
+            background: rgba(2, 136, 209, 0.2);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>LaTeX文本处理工具</h1>
+        <div class="header-container">
+            <h1>LaTeX文本处理工具</h1>
+            <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
+        </div>
         
         <div class="toolbar">
             <button onclick="processWithWrap(chuliwenben)">📝 处理文本</button>
@@ -219,6 +308,15 @@
             <div class="editor-box">
                 <div class="editor-header">LaTeX 输出</div>
                 <pre id="outputText" class="output-area" contenteditable="true"></pre>
+            </div>
+
+            <!-- 添加历史记录面板 -->
+            <div id="historyPanel" class="history-panel">
+                <div class="history-header">
+                    <h3>历史记录</h3>
+                    <button onclick="clearHistory()" class="clear-history">清空记录</button>
+                </div>
+                <div id="historyList" class="history-list"></div>
             </div>
         </div>
     </div>
@@ -260,19 +358,18 @@
             const loader = createLoader();
             
             try {
-                // 重置为纯文本内容
-                output.textContent = ''; // 清空内容
-                
-                // 执行处理逻辑
+                output.textContent = '';
                 processor();
-                
-                // 强制浏览器重绘
                 void output.offsetHeight;
-                
-                // 重新应用语法高亮
                 highlightLatex();
                 
-                // 最终样式确认
+                // 添加到历史记录
+                addToHistory({
+                    input: document.getElementById('inputText').value,
+                    output: output.textContent,
+                    timestamp: new Date().toISOString()
+                });
+                
                 setTimeout(() => {
                     output.style.cssText += `
                         white-space: pre-wrap !important;
@@ -365,6 +462,53 @@
                 e.target.selectionStart = e.target.selectionEnd = start + 4;
             }
         });
+
+        // 历史记录功能
+        function addToHistory(record) {
+            let history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
+            history.unshift(record);
+            history = history.slice(0, 10); // 只保留最近10条记录
+            localStorage.setItem('latexHistory', JSON.stringify(history));
+            updateHistoryPanel();
+        }
+
+        function updateHistoryPanel() {
+            const historyList = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
+            
+            historyList.innerHTML = history.map((record, index) => `
+                <div class="history-item" onclick="restoreHistory(${index})">
+                    <div class="history-item-time">${new Date(record.timestamp).toLocaleString()}</div>
+                    <div class="history-item-preview">${record.input.substring(0, 50)}...</div>
+                </div>
+            `).join('');
+        }
+
+        function restoreHistory(index) {
+            const history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
+            const record = history[index];
+            
+            document.getElementById('inputText').value = record.input;
+            const output = document.getElementById('outputText');
+            output.textContent = record.output;
+            highlightLatex();
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('latexHistory');
+            updateHistoryPanel();
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('historyPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                updateHistoryPanel();
+            }
+        }
+
+        // 初始化时更新历史记录面板
+        document.addEventListener('DOMContentLoaded', updateHistoryPanel);
     </script>
 </body>
 </html>
