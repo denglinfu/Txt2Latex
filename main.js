@@ -303,6 +303,8 @@ const TextToLatex = {
         line = line.replace(/±/g, '\\pm ');
         line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ ');
         line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min');
+        line = line.replace(/°C/g, '\\ \\degree\\rm{C}');
+        line = line.replace(/°F/g, '\\ \\degree\\rm{F}');
         return line;
     },
 
