@@ -484,36 +484,33 @@ const EquationProcessor = {
 };
 
 // 辅助功能模块
-const Utils = {
-    copyText() {
-        var outputText = document.getElementById("outputText");
-        var textArea = document.createElement("textarea");
-        var textContent = outputText.innerText;
-        textArea.value = textContent.replace(/<br>/g, "\r\n");
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("Copy");
-        textArea.remove();
-    },
-
-    chulifenduan() {
-        var inputText = document.getElementById("inputText");
-        var equations = inputText.value.split('=');
-        var result = equations.join('\n=');
-        inputText.value = result;
-    },
-
-    chuliyuandaima() {
-        var inputText = document.getElementById("inputText");
-        var text = inputText.value;
-        text = text.replace(/\[p\]/g, "");
-        text = text.replace(/\[\/p\]/g, "\n");
-        text = text.replace(/\[tex=\d+\.\d+x\d+\.\d+\]|%\[\/tex\]|\[img=\d+x\d+\]\d+\.png\[\/img\]|\[tex\]/g, "");
-        text = text.replace(/\[input=type:blank,size:4\]\[\/input\]/g, '______');
-        text = text.replace(/\$\$/g, '$');
-        inputText.value = text;
-    }
+function copyText() {
+    var outputText = document.getElementById("outputText");
+    var textArea = document.createElement("textarea");
+    var textContent = outputText.innerText;
+    textArea.value = textContent.replace(/<br>/g, "\r\n");
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
 };
+
+function chulifenduan() {
+    var inputText = document.getElementById("inputText");
+    var equations = inputText.value.split('=');
+    var result = equations.join('\n=');
+    inputText.value = result;
+};
+function chuliyuandaima() {
+    var inputText = document.getElementById("inputText");
+    var text = inputText.value;
+    text = text.replace(/\[p\]/g, "");
+    text = text.replace(/\[\/p\]/g, "\n");
+    text = text.replace(/\[tex=\d+\.\d+x\d+\.\d+\]|%\[\/tex\]|\[img=\d+x\d+\]\d+\.png\[\/img\]|\[tex\]/g, "");
+    text = text.replace(/\[input=type:blank,size:4\]\[\/input\]/g, '______');
+    text = text.replace(/\$\$/g, '$');
+    inputText.value = text;
+}
 
 // 处理函数
 function chuliwenben() {
