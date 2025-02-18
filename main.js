@@ -296,6 +296,7 @@ const TextToLatex = {
         line = line.replace(/≈/g, '\\approx ');
         line = line.replace(/\\varDelta/g, '△');
         line = line.replace(/\\Delta/g, '△');
+        line = line.replace(/\\square/g, '□');
         line = line.replace(/~/g, '\\sim ');
         line = line.replace(/⊥/g, '\\perp ');
         line = line.replace(/∥/g, '∥');
