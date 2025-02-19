@@ -340,20 +340,20 @@ button:active {
 /* 计算器面板样式 */
 .calculator-panel {
     position: fixed;
-    right: -320px;
+    right: 0;
     top: 0;
     width: 320px;
     height: 100vh;
     background: white;
     box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-    transition: right 0.3s ease;
     z-index: 999;
     display: flex;
     flex-direction: column;
+    display: none;
 }
 
 .calculator-panel.active {
-    right: 0;
+    display: flex;
 }
 
 .calculator-header {
@@ -375,10 +375,13 @@ button:active {
 
 #calculatorInput {
     width: 100%;
+    min-height: 80px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    resize: vertical;
+    font-family: 'Consolas', monospace;
 }
 
 .calculator-output {

@@ -75,7 +75,7 @@
             <button onclick="clearCalculator()" class="clear-calculator">清空</button>
         </div>
         <div class="calculator-content">
-            <input type="text" id="calculatorInput" placeholder="输入算式或LaTeX公式...">
+            <textarea id="calculatorInput" placeholder="输入算式或LaTeX公式..."></textarea>
             <div id="calculatorOutput" class="calculator-output"></div>
             <div class="calculator-buttons">
                 <button onclick="appendToCalculator('7')">7</button>
@@ -96,6 +96,7 @@
                 <button onclick="appendToCalculator('+')">+</button>
                 <button onclick="appendToCalculator(')')" class="operator">)</button>
                 <button onclick="appendToCalculator('^')" class="operator">^</button>
+                <button onclick="appendToCalculator('π')" class="operator">π</button>
                 <button onclick="calculateResult()" class="equals">=</button>
             </div>
         </div>

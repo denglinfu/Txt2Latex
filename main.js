@@ -186,8 +186,11 @@ function calculateResult() {
         let result;
         // 检查是否包含 LaTeX 公式
         if (input.includes('\\') || input.includes('$')) {
-            // 移除 LaTeX 中的 $ 符号
-            let cleanInput = input.replace(/\$/g, '');
+            // 移除 LaTeX 中的 $ 符号和等号
+            let cleanInput = input.replace(/\$/g, '').replace(/=/g, '');
+            
+            // 首先移除所有的 \left 和 \right
+            cleanInput = cleanInput.replace(/\\left/g, '').replace(/\\right/g, '');
             
             // 处理基本的 LaTeX 数学表达式
             cleanInput = cleanInput
@@ -195,16 +198,17 @@ function calculateResult() {
                 .replace(/\\times/g, '*')  // 处理乘号
                 .replace(/\\div/g, '/')    // 处理除号
                 .replace(/\^/g, '**')      // 处理指数
-                .replace(/\\pi/g, 'pi') // 处理 π
-                .replace(/\\left\[/g, '[')  // 处理左中括号
-                .replace(/\\right\]/g, ']') // 处理右中括号
-                .replace(/\[/g, '(')        // 将剩余的中括号转换为小括号
-                .replace(/\]/g, ')');       // 将剩余的中括号转换为小括号
+                .replace(/\\pi|π/g, '3.14') // 处理 π
+                .replace(/\[/g, '(')        // 将中括号转换为小括号
+                .replace(/\]/g, ')');       // 将中括号转换为小括号
                 
             result = math.evaluate(cleanInput);
         } else {
-            // 处理普通数学表达式，将中括号转换为小括号
-            const cleanInput = input.replace(/\[/g, '(').replace(/\]/g, ')');
+            // 处理普通数学表达式，移除等号并将中括号转换为小括号
+            const cleanInput = input.replace(/=/g, '')
+                                  .replace(/\[/g, '(')
+                                  .replace(/\]/g, ')')
+                                  .replace(/π/g, '3.14');
             result = math.evaluate(cleanInput);
         }
 
@@ -333,8 +337,6 @@ document.addEventListener('click', (e) => {
     const historyBtn = document.querySelector('.history-btn');
     const tempStoragePanel = document.getElementById('tempStoragePanel');
     const tempStorageBtn = document.querySelector('.temp-storage-btn');
-    const calculatorPanel = document.getElementById('calculatorPanel');
-    const calculatorBtn = document.querySelector('.calculator-btn');
     
     // 处理历史记录面板
     if (historyPanel.classList.contains('active') && 
@@ -348,13 +350,6 @@ document.addEventListener('click', (e) => {
         !tempStoragePanel.contains(e.target) && 
         !tempStorageBtn.contains(e.target)) {
         tempStoragePanel.classList.remove('active');
-    }
-    
-    // 处理计算器面板
-    if (calculatorPanel.classList.contains('active') && 
-        !calculatorPanel.contains(e.target) && 
-        !calculatorBtn.contains(e.target)) {
-        calculatorPanel.classList.remove('active');
     }
 });
 
