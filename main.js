@@ -195,12 +195,17 @@ function calculateResult() {
                 .replace(/\\times/g, '*')  // 处理乘号
                 .replace(/\\div/g, '/')    // 处理除号
                 .replace(/\^/g, '**')      // 处理指数
-                .replace(/\\pi/g, 'pi'); // 处理 π
+                .replace(/\\pi/g, 'pi') // 处理 π
+                .replace(/\\left\[/g, '[')  // 处理左中括号
+                .replace(/\\right\]/g, ']') // 处理右中括号
+                .replace(/\[/g, '(')        // 将剩余的中括号转换为小括号
+                .replace(/\]/g, ')');       // 将剩余的中括号转换为小括号
                 
             result = math.evaluate(cleanInput);
         } else {
-            // 处理普通数学表达式
-            result = math.evaluate(input);
+            // 处理普通数学表达式，将中括号转换为小括号
+            const cleanInput = input.replace(/\[/g, '(').replace(/\]/g, ')');
+            result = math.evaluate(cleanInput);
         }
 
         // 使用高精度计算
