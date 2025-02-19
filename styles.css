@@ -335,4 +335,97 @@ button:active {
 .history-btn:hover,
 .temp-storage-btn:hover {
     background: rgba(2, 136, 209, 0.2);
+}
+
+/* 计算器面板样式 */
+.calculator-panel {
+    position: fixed;
+    right: -320px;
+    top: 0;
+    width: 320px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+.calculator-panel.active {
+    right: 0;
+}
+
+.calculator-header {
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calculator-content {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#calculatorInput {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.calculator-output {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+}
+
+.calculator-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.calculator-buttons button {
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-color);
+}
+
+.calculator-buttons button:hover {
+    background: #f0f0f0;
+    transform: none;
+}
+
+.calculator-buttons .equals {
+    background: var(--primary-color);
+    color: white;
+}
+
+.calculator-buttons .operator {
+    background: #f0f0f0;
+}
+
+.calculator-btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background: rgba(2, 136, 209, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.calculator-btn:hover {
+    background: rgba(2, 136, 209, 0.2);
 } 

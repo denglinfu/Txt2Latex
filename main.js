@@ -162,12 +162,174 @@ function clearTempStorage() {
     tempStorage.value = '';
 }
 
+// 计算器功能
+function toggleCalculator() {
+    const panel = document.getElementById('calculatorPanel');
+    panel.classList.toggle('active');
+}
+
+function clearCalculator() {
+    document.getElementById('calculatorInput').value = '';
+    document.getElementById('calculatorOutput').textContent = '';
+}
+
+function appendToCalculator(value) {
+    const input = document.getElementById('calculatorInput');
+    input.value += value;
+}
+
+function calculateResult() {
+    const input = document.getElementById('calculatorInput').value;
+    const output = document.getElementById('calculatorOutput');
+    
+    try {
+        let result;
+        // 检查是否包含 LaTeX 公式
+        if (input.includes('\\') || input.includes('$')) {
+            // 移除 LaTeX 中的 $ 符号
+            let cleanInput = input.replace(/\$/g, '');
+            
+            // 处理基本的 LaTeX 数学表达式
+            cleanInput = cleanInput
+                .replace(/\\dfrac{([^}]*)}{([^}]*)}/g, '($1)/($2)') // 处理分数
+                .replace(/\\times/g, '*')  // 处理乘号
+                .replace(/\\div/g, '/')    // 处理除号
+                .replace(/\^/g, '**')      // 处理指数
+                .replace(/\\pi/g, 'pi'); // 处理 π
+                
+            result = math.evaluate(cleanInput);
+        } else {
+            // 处理普通数学表达式
+            result = math.evaluate(input);
+        }
+
+        // 使用高精度计算
+        const preciseResult = Number(result.toFixed(10));
+        
+        // 将结果转换为分数
+        const fraction = math.fraction(result);
+        
+        // 生成带分数表示
+        let mixedNumber = '无';
+        if (Math.abs(fraction.n) >= Math.abs(fraction.d)) {
+            const whole = Math.floor(Math.abs(fraction.n) / fraction.d);
+            const remainder = Math.abs(fraction.n) % fraction.d;
+            const sign = fraction.n < 0 ? '-' : '';
+            mixedNumber = remainder === 0 ? 
+                `${sign}${whole}` : 
+                `${sign}${whole}\\frac{${remainder}}{${fraction.d}}`;
+        }
+        
+        // 格式化输出
+        output.innerHTML = 
+            `小数：${preciseResult}\n` +
+            `分数：\\frac{${fraction.n}}{${fraction.d}}\n` +
+            `带分数：${mixedNumber}`;
+
+        // 使用 MathJax 渲染结果（如果页面中有使用 MathJax）
+        if (window.MathJax) {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
+        }
+    } catch (error) {
+        output.textContent = `错误: ${error.message}`;
+    }
+}
+
+// 添加分数计算辅助函数
+function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+        [a, b] = [b, a % b];
+    }
+    return a;
+}
+
+function lcm(a, b) {
+    return Math.abs(a * b) / gcd(a, b);
+}
+
+function Fraction(numerator, denominator = 1) {
+    this.numerator = numerator;
+    this.denominator = denominator;
+    
+    this.simplify = function() {
+        const divisor = gcd(this.numerator, this.denominator);
+        this.numerator /= divisor;
+        this.denominator /= divisor;
+        if (this.denominator < 0) {
+            this.numerator = -this.numerator;
+            this.denominator = -this.denominator;
+        }
+        return this;
+    };
+    
+    this.add = function(other) {
+        const commonDenom = lcm(this.denominator, other.denominator);
+        const newNum = this.numerator * (commonDenom / this.denominator) +
+                      other.numerator * (commonDenom / other.denominator);
+        return new Fraction(newNum, commonDenom).simplify();
+    };
+    
+    this.subtract = function(other) {
+        return this.add(new Fraction(-other.numerator, other.denominator));
+    };
+    
+    this.multiply = function(other) {
+        return new Fraction(
+            this.numerator * other.numerator,
+            this.denominator * other.denominator
+        ).simplify();
+    };
+    
+    this.divide = function(other) {
+        return this.multiply(new Fraction(other.denominator, other.numerator));
+    };
+    
+    this.toDecimal = function(precision = 10) {
+        return Number((this.numerator / this.denominator).toPrecision(precision));
+    };
+    
+    this.toMixed = function() {
+        if (Math.abs(this.numerator) < this.denominator) return '无';
+        const whole = Math.floor(Math.abs(this.numerator) / this.denominator);
+        const remainder = Math.abs(this.numerator) % this.denominator;
+        const sign = this.numerator < 0 ? '-' : '';
+        return remainder === 0 ? 
+            `${sign}${whole}` : 
+            `${sign}${whole}\\frac{${remainder}}{${this.denominator}}`;
+    };
+    
+    this.toString = function() {
+        return `\\frac{${this.numerator}}{${this.denominator}}`;
+    };
+    
+    this.simplify();
+}
+
+function parseFraction(str) {
+    if (str.includes('/')) {
+        const [num, denom] = str.split('/').map(Number);
+        return new Fraction(num, denom);
+    }
+    const num = Number(str);
+    if (Number.isInteger(num)) {
+        return new Fraction(num);
+    }
+    const parts = str.split('.');
+    const denominator = Math.pow(10, parts[1].length);
+    const numerator = Number(parts.join(''));
+    return new Fraction(numerator, denominator).simplify();
+}
+
 // 修改现有的点击空白处关闭面板的事件监听器
 document.addEventListener('click', (e) => {
     const historyPanel = document.getElementById('historyPanel');
     const historyBtn = document.querySelector('.history-btn');
     const tempStoragePanel = document.getElementById('tempStoragePanel');
     const tempStorageBtn = document.querySelector('.temp-storage-btn');
+    const calculatorPanel = document.getElementById('calculatorPanel');
+    const calculatorBtn = document.querySelector('.calculator-btn');
     
     // 处理历史记录面板
     if (historyPanel.classList.contains('active') && 
@@ -181,6 +343,13 @@ document.addEventListener('click', (e) => {
         !tempStoragePanel.contains(e.target) && 
         !tempStorageBtn.contains(e.target)) {
         tempStoragePanel.classList.remove('active');
+    }
+    
+    // 处理计算器面板
+    if (calculatorPanel.classList.contains('active') && 
+        !calculatorPanel.contains(e.target) && 
+        !calculatorBtn.contains(e.target)) {
+        calculatorPanel.classList.remove('active');
     }
 });
 

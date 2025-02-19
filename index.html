@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/latex.min.js"></script>
     <!-- 业务脚本 -->
     <script src="main.js" defer></script>
+    <!-- 在 head 中添加 math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.js"></script>
 </head>
 <body>
     <div class="container" id="mainContainer">
@@ -19,6 +21,7 @@
             <h1>LaTeX文本处理工具</h1>
             <div class="header-buttons">
                 <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
+                <button onclick="toggleCalculator()" class="calculator-btn">🔢 计算器</button>
                 <button onclick="toggleTempStorage()" class="temp-storage-btn">📦 暂存内容</button>
             </div>
         </div>
@@ -65,5 +68,37 @@
     </div>
 
     <div id="watermark">Design By 付登临 | Version 2.2</div>
+
+    <div id="calculatorPanel" class="calculator-panel">
+        <div class="calculator-header">
+            <h3>计算器</h3>
+            <button onclick="clearCalculator()" class="clear-calculator">清空</button>
+        </div>
+        <div class="calculator-content">
+            <input type="text" id="calculatorInput" placeholder="输入算式或LaTeX公式...">
+            <div id="calculatorOutput" class="calculator-output"></div>
+            <div class="calculator-buttons">
+                <button onclick="appendToCalculator('7')">7</button>
+                <button onclick="appendToCalculator('8')">8</button>
+                <button onclick="appendToCalculator('9')">9</button>
+                <button onclick="appendToCalculator('/')">/</button>
+                <button onclick="appendToCalculator('4')">4</button>
+                <button onclick="appendToCalculator('5')">5</button>
+                <button onclick="appendToCalculator('6')">6</button>
+                <button onclick="appendToCalculator('*')">×</button>
+                <button onclick="appendToCalculator('1')">1</button>
+                <button onclick="appendToCalculator('2')">2</button>
+                <button onclick="appendToCalculator('3')">3</button>
+                <button onclick="appendToCalculator('-')">-</button>
+                <button onclick="appendToCalculator('0')">0</button>
+                <button onclick="appendToCalculator('.')">.</button>
+                <button onclick="appendToCalculator('(')">(</button>
+                <button onclick="appendToCalculator('+')">+</button>
+                <button onclick="appendToCalculator(')')" class="operator">)</button>
+                <button onclick="appendToCalculator('^')" class="operator">^</button>
+                <button onclick="calculateResult()" class="equals">=</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
