@@ -451,6 +451,7 @@ const TextToLatex = {
         // 排除m/s，km/h，m/min
         line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
+        line = line.replace(/℃/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°C/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°F/g, '\\ \\degree\\rm{F}');
         line = line.replace(/>/g, '\\gt ');
