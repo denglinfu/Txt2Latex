@@ -472,6 +472,7 @@ const TextToLatex = {
         line = line.replace(/△/g, '\\triangle ');
         line = line.replace(/▽/g, '\\bigtriangledown ');
         line = line.replace(/\\square/g, '□');
+        line = line.replace(/\\Box/g, '□');
         line = line.replace(/~/g, '\\sim ');
         line = line.replace(/⊥/g, '\\perp ');
         line = line.replace(/∥/g, '∥');
