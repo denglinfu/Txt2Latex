@@ -396,7 +396,6 @@ const TextToLatex = {
     processTextToLaTeX(line) {
         // 删除已有的 $ 符号
         line = line.replace(/\$/g, '');
-        line = line.replace(/\\+$/gm, ''); // 删除每行末尾的反斜杠
         // 删除 left和 right 关键字
         line = line.replace(/\\left/g, '');
         line = line.replace(/\\right/g, '');
@@ -413,6 +412,7 @@ const TextToLatex = {
         line = line.replace(/[^\S\n]+/g, '');
         line = line.replace(/ /g, '');
         line = line.replace(/ /g, '');
+        line = line.replace(/\\+$/gm, ''); // 删除每行末尾的反斜杠
         // 删除 \rm 关键字
         line = line.replace(/\\rm/g, '');
         // 替换特殊符号和标点符号
