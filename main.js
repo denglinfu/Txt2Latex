@@ -403,11 +403,7 @@ const TextToLatex = {
         line = line.replace(/\\frac/g, '\\dfrac');
         line = line.replace(/\\tfrac/g, '\\dfrac');
         // 替换 "{...} \over {...}" 分数格式为 \dfrac
-        line = line.replace(/\{([^{}]*)\}\s*\\over\s*\{([^{}]*)\}/g, '\\dfrac{$1}{$2}');  // 处理 {a} \over {b}
-        line = line.replace(/([^{}]+)\s*\\over\s*\{([^{}]*)\}/g, '\\dfrac{$1}{$2}');      // 处理 a \over {b}
-        line = line.replace(/\{([^{}]*)\}\s*\\over\s*([^{}]+)/g, '\\dfrac{$1}{$2}');      // 处理 {a} \over b
-        line = line.replace(/([^{}]+)\s*\\over\s*([^{}]+)/g, '\\dfrac{$1}{$2}');          // 处理 a \over b
-        line = line.replace(/\{\\dfrac{(\d+)}{(\d+)}\}/g, '\\dfrac{$1}{$2}');          // 处理 a \over b
+        line = line.replace(/\\over/g, '\/');
         // 删除多余空格
         line = line.replace(/[^\S\n]+/g, '');
         line = line.replace(/ /g, '');
@@ -452,6 +448,7 @@ const TextToLatex = {
         // 排除m/s，km/h，m/min
         line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
+        line = line.replace(/\{\\dfrac{(\d+)}{(\d+)}\}/g, '\\dfrac{$1}{$2}');          // 处理 a \over b
         line = line.replace(/℃/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°C/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°F/g, '\\ \\degree\\rm{F}');
