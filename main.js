@@ -108,6 +108,43 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 2500);
 }
 
+// 清空输入框
+function clearInput() {
+    document.getElementById('inputText').value = '';
+}
+
+// 切换查找替换框的显示状态
+function toggleFindReplace() {
+    const findReplaceBox = document.getElementById('findReplaceBox');
+    findReplaceBox.style.display = findReplaceBox.style.display === 'none' ? 'block' : 'none';
+}
+
+// 查找并替换一次
+function findAndReplace() {
+    const inputText = document.getElementById('inputText');
+    const findText = document.getElementById('findText').value;
+    const replaceText = document.getElementById('replaceText').value;
+    
+    if (findText === '') return;
+    
+    const content = inputText.value;
+    const newContent = content.replace(findText, replaceText);
+    inputText.value = newContent;
+}
+
+// 查找并替换所有
+function findAndReplaceAll() {
+    const inputText = document.getElementById('inputText');
+    const findText = document.getElementById('findText').value;
+    const replaceText = document.getElementById('replaceText').value;
+    
+    if (findText === '') return;
+    
+    const content = inputText.value;
+    const newContent = content.replaceAll(findText, replaceText);
+    inputText.value = newContent;
+}
+
 // 历史记录功能
 function addToHistory(record) {
     let history = JSON.parse(localStorage.getItem('latexHistory') || '[]');

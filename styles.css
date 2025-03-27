@@ -66,6 +66,37 @@ body {
     background: var(--primary-color);
     color: white;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.editor-header-btn {
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.find-replace-box {
+    padding: 10px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.find-replace-box input {
+    margin-right: 10px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.find-replace-box button {
+    padding: 4px 8px;
+    margin-right: 5px;
+    cursor: pointer;
 }
 
 textarea {
@@ -431,4 +462,4 @@ button:active {
 
 .calculator-btn:hover {
     background: rgba(2, 136, 209, 0.2);
-} 
+}

@@ -39,7 +39,17 @@
 
         <div class="editor-container">
             <div class="editor-box">
-                <div class="editor-header">原始文本</div>
+                <div class="editor-header">
+                    原始文本
+                    <button onclick="clearInput()" class="editor-header-btn">🗑️ 清空</button>
+                    <button onclick="toggleFindReplace()" class="editor-header-btn">🔍 查找替换</button>
+                </div>
+                <div id="findReplaceBox" class="find-replace-box" style="display: none;">
+                    <input type="text" id="findText" placeholder="查找内容...">
+                    <input type="text" id="replaceText" placeholder="替换为...">
+                    <button onclick="findAndReplace()">替换</button>
+                    <button onclick="findAndReplaceAll()">全部替换</button>
+                </div>
                 <textarea id="inputText" placeholder="在此输入要转换的内容..."></textarea>
             </div>
             
