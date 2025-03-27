@@ -496,6 +496,7 @@ const TextToLatex = {
         line = line.replace(/≠/g, '\\not= ');
         line = line.replace(/≥/g, '\\geqslant ');
         line = line.replace(/≤/g, '\\leqslant ');
+        line = line.replace(/\\%/g, '\%');
         line = line.replace(/%/g, '\\% ');
         line = line.replace(/∠/g, '\\angle ');
         line = line.replace(/°/g, '\\degree ');
