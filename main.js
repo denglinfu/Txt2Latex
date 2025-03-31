@@ -488,6 +488,7 @@ const TextToLatex = {
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/\{\\dfrac{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 {\dfrac{a}{b}}
         line = line.replace(/\\dfrac\{{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 \dfrac{{a}{b}}
+        line = line.replace(/\|(\w)\|/g, '\\lvert $1\\rvert ');          // |a|    
         line = line.replace(/℃/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°C/g, '\\ \\degree\\rm{C}');
         line = line.replace(/°F/g, '\\ \\degree\\rm{F}');
