@@ -477,9 +477,8 @@ const TextToLatex = {
         // 排除m/s，km/h，m/min
         line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
-        line = line.replace(/\{\\dfrac{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 {\dfrac{a}{b}}
-        line = line.replace(/\\dfrac\{{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 \dfrac{{a}{b}}
-        line = line.replace(/\\lvert\s*(\w+)\s*\\rvert|\|(\w+)\|/g, '\\lvert $1\\rvert '); // 处理 \lvert a \rvert 和 |a|
+        line = line.replace(/\{\\dfrac\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 {\dfrac{a}{b}}
+        line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
         line = line.replace(/℃|°C/g, '\\ \\degree\\rm{C}'); // 处理 ℃ 和 °C
         line = line.replace(/°F/g, '\\ \\degree\\rm{F}'); // 处理 °F
         line = line.replace(/\\gt|>|＞/g, '\\gt '); // 处理 > 和 ＞
