@@ -435,11 +435,10 @@ const TextToLatex = {
         // \\,删除 \, 符号
         // \\left删除 \left 关键字
         // \\right删除 \right 关键字
-        // \s+删除连续空白字符
         // [^\S\n]+删除非换行的空白字符
         // \\+$删除行尾的反斜杠
         // \\rm删除 \rm 关键字
-        line = line.replace(/\$|\\,|\\left|\\right|\s+|[^\S\n]+|\\+$|\\rm/g, ''); // 删除所有 $ 符号
+        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm/g, ''); // 删除所有 $ 符号
         // 将 \frac 和 \tfrac 替换为 \dfrac
         line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
         // 替换 "{...} \over {...}" 分数格式为 \dfrac
