@@ -432,94 +432,72 @@ const TextToLatex = {
 
     processTextToLaTeX(line) {
         // 删除已有的 $ 符号
-        line = line.replace(/\$/g, '');
-        line = line.replace(/\\,/g, '');
-        // 删除 left和 right 关键字
-        line = line.replace(/\\left/g, '');
-        line = line.replace(/\\right/g, '');
+        line = line.replace(/\$|\\,|\\left|\\right| | |[^\S\n]+|\\+$|\\rm/g, ''); // 删除所有 $ 关键字
         // 将 \frac 和 \tfrac 替换为 \dfrac
-        line = line.replace(/\\frac/g, '\\dfrac');
-        line = line.replace(/\\tfrac/g, '\\dfrac');
+        line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
         // 替换 "{...} \over {...}" 分数格式为 \dfrac
-        line = line.replace(/\\over/g, '\/');
-        // 删除多余空格
-        line = line.replace(/[^\S\n]+/g, '');
-        line = line.replace(/ /g, '');
-        line = line.replace(/ /g, '');
-        line = line.replace(/\\+$/gm, ''); // 删除每行末尾的反斜杠
-        // 删除 \rm 关键字
-        line = line.replace(/\\rm/g, '');
+        line = line.replace(/\\over/g, '\/'); // 删除所有 \over 关键字
         // 替换特殊符号和标点符号
-        line = line.replace(/##/g, '或');
-        line = line.replace(/：/g, ':');
-        line = line.replace(/∶/g, ':');
-        line = line.replace(/（/g, '(');
-        line = line.replace(/）/g, ')');
-        line = line.replace(/＝/g, '=');
-        line = line.replace(/﹣/g, '-');
-        line = line.replace(/＋/g, '+');
-        line = line.replace(/－/g, '-');
-        line = line.replace(/−/g, '-');
-        line = line.replace(/［/g, '[');
-        line = line.replace(/］/g, ']');
-        line = line.replace(/,/g, '，');
-        line = line.replace(/\.$/g, '。');
+        line = line.replace(/##/g, '或');   // 替换 ##
+        line = line.replace(/：|∶/g, ':'); // 替换冒号
+        line = line.replace(/（/g, '(');    // 替换小括号
+        line = line.replace(/）/g, ')');    // 替换小括号
+        line = line.replace(/＝/g, '=');    // 替换等号
+        line = line.replace(/﹣|－|−/g, '-');    // 替换减号
+        line = line.replace(/＋/g, '+');    // 替换加号
+        line = line.replace(/［/g, '[');    // 替换中括号
+        line = line.replace(/］/g, ']');      // 替换中括号
+        line = line.replace(/,/g, '，');    // 替换中文逗号
+        line = line.replace(/\.$/g, '。');  // 替换句号
 
         // 添加将(a，b)类型替换为(a,b)的逻辑
-        line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');
+        line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');   // 替换中文逗号为英文逗号
 
         // 替换中括号和小括号
-        line = this.replaceBrackets(line);
+        line = this.replaceBrackets(line);  // 替换中括号和小括号
         // 处理单位
-        line = this.convertUnits(line);
+        line = this.convertUnits(line); // 处理单位
         // 为空括号和空方括号增加空白
-        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ )');
-        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ ]');
+        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ )');    // 替换空括号
+        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
         // 替换数学运算符为 LaTeX  
-        line = line.replace(/×/g, '\\times ');
-        line = line.replace(/÷/g, '\\div ');
-        line = line.replace(/\(/g, '\\left(');
-        line = line.replace(/\)/g, '\\right)');
-        line = line.replace(/\[/g, '\\left[');
-        line = line.replace(/\]/g, '\\right]');
+        line = line.replace(/×|\\times/g, '\\times ');  // 替换乘号
+        line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
+        line = line.replace(/\(/g, '\\left(');  // 替换左括号
+        line = line.replace(/\)/g, '\\right)'); // 替换右括号
+        line = line.replace(/\[/g, '\\left['); // 替换左方括号
+        line = line.replace(/\]/g, '\\right]'); // 替换右方括号
         line = line.replace(/([a-zA-Z0-9]+)@([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '$1\\dfrac{$2}{$3}');
         // 排除m/s，km/h，m/min
         line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/\{\\dfrac{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 {\dfrac{a}{b}}
         line = line.replace(/\\dfrac\{{(\w)}{(\w)}\}/g, '\\dfrac{$1}{$2}');          // 处理 \dfrac{{a}{b}}
-        line = line.replace(/\|(\w)\|/g, '\\lvert $1\\rvert ');          // |a|    
-        line = line.replace(/℃/g, '\\ \\degree\\rm{C}');
-        line = line.replace(/°C/g, '\\ \\degree\\rm{C}');
-        line = line.replace(/°F/g, '\\ \\degree\\rm{F}');
-        line = line.replace(/>/g, '\\gt ');
-        line = line.replace(/＞/g, '\\gt ');
-        line = line.replace(/</g, '\\lt ');
-        line = line.replace(/≠/g, '\\not= ');
-        line = line.replace(/≥/g, '\\geqslant ');
-        line = line.replace(/≤/g, '\\leqslant ');
-        line = line.replace(/\\%/g, '\%');
-        line = line.replace(/%/g, '\\% ');
-        line = line.replace(/∠/g, '\\angle ');
-        line = line.replace(/°/g, '\\degree ');
-        line = line.replace(/\.\.\./g, '\\cdots ');
-        line = line.replace(/…/g, '\\cdots ');
-        line = line.replace(/≈/g, '\\approx ');
-        line = line.replace(/\\varDelta/g, '\\triangle ');
-        line = line.replace(/\\Delta/g, '\\triangle ');
-        line = line.replace(/△/g, '\\triangle ');
-        line = line.replace(/▽/g, '\\bigtriangledown ');
-        line = line.replace(/\\square/g, '□');
-        line = line.replace(/\\Box/g, '□');
-        line = line.replace(/~/g, '\\sim ');
-        line = line.replace(/⊥/g, '\\perp ');
-        line = line.replace(/∥/g, '∥');
-        line = line.replace(/\\dot/g, '\\overset{\\bullet}');
-        line = line.replace(/π/g, '\\mathrm{π}');
-        line = line.replace(/\\pi/g, '\\mathrm{π}');
-        line = line.replace(/±/g, '\\pm ');
-        line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ ');
-        line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min');
+        line = line.replace(/\\lvert\s*(\w+)\s*\\rvert|\|(\w+)\|/g, '\\lvert $1\\rvert '); // 处理 \lvert a \rvert 和 |a|
+        line = line.replace(/℃|°C/g, '\\ \\degree\\rm{C}'); // 处理 ℃ 和 °C
+        line = line.replace(/°F/g, '\\ \\degree\\rm{F}'); // 处理 °F
+        line = line.replace(/\\gt|>|＞/g, '\\gt '); // 处理 > 和 ＞
+        line = line.replace(/\\lt|</g, '\\lt '); // 处理 < 和 ＜
+        line = line.replace(/≠/g, '\\not= '); // 处理 ≠
+        line = line.replace(/≥|\\geqslant/g, '\\geqslant '); // 处理 ≥ 和 ≥
+        line = line.replace(/≤|\\leqslant/g, '\\leqslant '); // 处理 ≤ 和 ≤
+        line = line.replace(/\\%/g, '\%');  // 处理 \%
+        line = line.replace(/%/g, '\\% '); // 处理 %
+        line = line.replace(/∠|\\angle/g, '\\angle '); // 处理 ∠ 和 ∠
+        line = line.replace(/°|\\degree/g, '\\degree '); // 处理 ° 和 °
+        line = line.replace(/\.\.\.|\\cdots|…/g, '\\cdots ');   // 处理 ... 和 …
+        line = line.replace(/≈|\\approx/g, '\\approx ');     // 处理 ≈ 和 ≈
+        line = line.replace(/\\varDelta|\\Delta|\\triangle|△/g, '\\triangle '); // 处理 Δ 和 △
+        line = line.replace(/▽/g, '\\bigtriangledown '); // 处理 ▽
+        line = line.replace(/\\square|\\Box/g, '□'); // 处理 □
+        line = line.replace(/~|\\sim/g, '\\sim '); // 处理 ~ 和 ~
+        line = line.replace(/⊥|\\perp/g, '\\perp '); // 处理 ⊥ 和 ⊥
+        line = line.replace(/∥/g, '∥'); // 处理 ∥
+        line = line.replace(/\\dot/g, '\\overset{\\bullet}'); // 处理 \dot
+        line = line.replace(/π|\\pi/g, '\\mathrm{π}'); // 处理 π
+        line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
+        line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ '); // 处理数字后面的 \rm
+        line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min'); // 处理 m/min
         return line;
     },
 
