@@ -59,28 +59,28 @@
                 <div class="editor-header">LaTeX 输出</div>
                 <pre id="outputText" class="output-area" contenteditable="true"></pre>
             </div>
-
-            <div id="historyPanel" class="history-panel">
-                <div class="history-header">
-                    <h3>历史记录</h3>
-                    <button onclick="clearHistory()" class="clear-history">清空记录</button>
-                </div>
-                <div id="historyList" class="history-list"></div>
-            </div>
-        </div>
-
-        <div id="tempStoragePanel" class="temp-storage-panel">
-            <div class="temp-storage-header">
-                <h3>暂存内容</h3>
-                <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
-            </div>
-            <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
         </div>
     </div>
 
     <div id="watermark">Design By 付登临 | Version 2.2</div>
 
-    <div id="calculatorPanel" class="calculator-panel">
+    <div id="historyPanel" class="side-panel history-panel">
+        <div class="history-header">
+            <h3>历史记录</h3>
+            <button onclick="clearHistory()" class="clear-history">清空记录</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+    </div>
+
+    <div id="tempStoragePanel" class="side-panel temp-storage-panel">
+        <div class="temp-storage-header">
+            <h3>暂存内容</h3>
+            <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
+        </div>
+        <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
+    </div>
+
+    <div id="calculatorPanel" class="side-panel calculator-panel">
         <div class="calculator-header">
             <h3>计算器</h3>
             <button onclick="clearCalculator()" class="clear-calculator">清空</button>
@@ -112,5 +112,7 @@
             </div>
         </div>
     </div>
+
+    <div id="overlay" class="overlay"></div>
 </body>
 </html>

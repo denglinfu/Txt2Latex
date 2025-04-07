@@ -181,18 +181,46 @@ function clearHistory() {
     updateHistoryPanel();
 }
 
-function toggleHistory() {
-    const panel = document.getElementById('historyPanel');
+function togglePanel(panelId) {
+    const panel = document.getElementById(panelId);
+    const overlay = document.getElementById('overlay');
+    const allPanels = document.querySelectorAll('.side-panel');
+    
+    // 关闭其他面板
+    allPanels.forEach(p => {
+        if (p.id !== panelId) {
+            p.classList.remove('active');
+        }
+    });
+
+    // 切换当前面板
     panel.classList.toggle('active');
+    
+    // 切换遮罩层
     if (panel.classList.contains('active')) {
-        updateHistoryPanel();
+        overlay.classList.add('active');
+    } else {
+        overlay.classList.remove('active');
     }
 }
 
-function toggleTempStorage() {
-    const panel = document.getElementById('tempStoragePanel');
-    panel.classList.toggle('active');
+function toggleHistory() {
+    togglePanel('historyPanel');
 }
+
+function toggleCalculator() {
+    togglePanel('calculatorPanel');
+}
+
+function toggleTempStorage() {
+    togglePanel('tempStoragePanel');
+}
+
+document.getElementById('overlay').addEventListener('click', function() {
+    const allPanels = document.querySelectorAll('.side-panel');
+    allPanels.forEach(panel => panel.classList.remove('active'));
+    this.classList.remove('active');
+});
 
 function clearTempStorage() {
     const tempStorage = document.getElementById('tempStorageArea');
@@ -200,11 +228,6 @@ function clearTempStorage() {
 }
 
 // 计算器功能
-function toggleCalculator() {
-    const panel = document.getElementById('calculatorPanel');
-    panel.classList.toggle('active');
-}
-
 function clearCalculator() {
     document.getElementById('calculatorInput').value = '';
     document.getElementById('calculatorOutput').textContent = '';
@@ -229,23 +252,28 @@ function calculateResult() {
             // 首先移除所有的 \left 和 \right
             cleanInput = cleanInput.replace(/\\left/g, '').replace(/\\right/g, '');
             
+            // 处理带分数格式 a\dfrac{b}{c}
+            cleanInput = cleanInput.replace(/(\d+)\\dfrac\{(\d+)\}\{(\d+)\}/g, (_, whole, num, denom) => {
+                return `(${whole}+${num}/${denom})`;
+            });
+            
             // 处理基本的 LaTeX 数学表达式
             cleanInput = cleanInput
-                .replace(/\\dfrac{([^}]*)}{([^}]*)}/g, '($1)/($2)') // 处理分数
+                .replace(/\\dfrac{([^}]*)}{([^}]*)}/g, '($1)/($2)') // 处理普通分数
                 .replace(/\\times/g, '*')  // 处理乘号
                 .replace(/\\div/g, '/')    // 处理除号
                 .replace(/\^/g, '**')      // 处理指数
-                .replace(/\\pi|π/g, '3.14') // 处理 π
+                .replace(/\\pi|π/g, 'Math.PI') // 处理 π
                 .replace(/\[/g, '(')        // 将中括号转换为小括号
                 .replace(/\]/g, ')');       // 将中括号转换为小括号
                 
             result = math.evaluate(cleanInput);
         } else {
-            // 处理普通数学表达式，移除等号并将中括号转换为小括号
-            const cleanInput = input.replace(/=/g, '')
-                                  .replace(/\[/g, '(')
-                                  .replace(/\]/g, ')')
-                                  .replace(/π/g, '3.14');
+            // 处理普通数学表达式
+            let cleanInput = input.replace(/=/g, '')
+                                .replace(/\[/g, '(')
+                                .replace(/\]/g, ')')
+                                .replace(/π/g, 'Math.PI');
             result = math.evaluate(cleanInput);
         }
 
@@ -263,7 +291,7 @@ function calculateResult() {
             const sign = fraction.n < 0 ? '-' : '';
             mixedNumber = remainder === 0 ? 
                 `${sign}${whole}` : 
-                `${sign}${whole}\\frac{${remainder}}{${fraction.d}}`;
+                `${sign}${whole}\\dfrac{${remainder}}{${fraction.d}}`;
         }
         
         // 格式化输出
@@ -272,10 +300,6 @@ function calculateResult() {
             `分数：\\frac{${fraction.n}}{${fraction.d}}\n` +
             `带分数：${mixedNumber}`;
 
-        // 使用 MathJax 渲染结果（如果页面中有使用 MathJax）
-        if (window.MathJax) {
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
-        }
     } catch (error) {
         output.textContent = `错误: ${error.message}`;
     }

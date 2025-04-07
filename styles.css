@@ -197,13 +197,15 @@ button:active {
     right: -300px;
     top: 0;
     width: 300px;
-    height: 100vh;
+    height: 100%;
     background: white;
     box-shadow: -2px 0 8px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .history-panel.active {
@@ -298,13 +300,15 @@ button:active {
     left: -300px;
     top: 0;
     width: 300px;
-    height: 100vh;
+    height: 100%;
     background: white;
     box-shadow: 2px 0 8px rgba(0,0,0,0.1);
     transition: left 0.3s ease;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .temp-storage-panel.active {
@@ -374,13 +378,15 @@ button:active {
     right: 0;
     top: 0;
     width: 320px;
-    height: 100vh;
+    height: 100%;
     background: white;
     box-shadow: -2px 0 8px rgba(0,0,0,0.1);
     z-index: 999;
     display: flex;
     flex-direction: column;
     display: none;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .calculator-panel.active {
@@ -462,4 +468,38 @@ button:active {
 
 .calculator-btn:hover {
     background: rgba(2, 136, 209, 0.2);
+}
+
+/* 添加以下样式 */
+.side-panel {
+    position: fixed;
+    left: -300px; /* 初始状态隐藏在左侧 */
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    background: #fff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.side-panel.active {
+    left: 0;
+}
+
+/* 添加遮罩层 */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
 }
