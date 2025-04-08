@@ -506,8 +506,8 @@ const TextToLatex = {
         line = line.replace(/℃|°C/g, '\\ \\degree\\rm{C}'); // 处理 ℃ 和 °C
         line = line.replace(/°F/g, '\\ \\degree\\rm{F}'); // 处理 °F
         line = line.replace(/\\gt|>|＞/g, '\\gt '); // 处理 > 和 ＞
-        line = line.replace(/\\lt|</g, '\\lt '); // 处理 < 和 ＜
-        line = line.replace(/≠/g, '\\not= '); // 处理 ≠
+        line = line.replace(/\\lt|<|＜/g, '\\lt '); // 处理 < 和 ＜
+        line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
         line = line.replace(/≥|\\geqslant/g, '\\geqslant '); // 处理 ≥ 和 ≥
         line = line.replace(/≤|\\leqslant/g, '\\leqslant '); // 处理 ≤ 和 ≤
         line = line.replace(/\\%/g, '\%');  // 处理 \%
