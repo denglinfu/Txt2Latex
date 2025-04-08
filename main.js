@@ -525,7 +525,7 @@ const TextToLatex = {
         line = line.replace(/\\dot/g, '\\overset{\\bullet}'); // 处理 \dot
         line = line.replace(/π|\\pi/g, '\\mathrm{π}'); // 处理 π
         line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
-        line = line.replace(/(\d+)\\mathrm/g, '$1\\mathrm\\ '); // 处理数字后面的 \mathrm
+        line = line.replace(/(\d+)\\mathrm/g, '$1\\ \\mathrm'); // 处理数字后面的 \mathrm
         line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min'); // 处理 m/min
         return line;
     },
