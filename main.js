@@ -461,8 +461,8 @@ const TextToLatex = {
         // \\right删除 \right 关键字
         // [^\S\n]+删除非换行的空白字符
         // \\+$删除行尾的反斜杠
-        // \\rm删除 \rm 关键字
-        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm/g, ''); // 删除所有 $ 符号
+        // \\rm\mathrm删除 \rm\mathrm 关键字
+        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm|\\mathrm/g, ''); // 删除所有 $ 符号
         // 将 \frac 和 \tfrac 替换为 \dfrac
         line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
         // 替换 "{...} \over {...}" 分数格式为 \dfrac
@@ -503,8 +503,8 @@ const TextToLatex = {
         line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
         line = line.replace(/\{\\dfrac\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 {\dfrac{a}{b}}
         line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
-        line = line.replace(/℃|°C/g, '\\ \\degree\\rm{C}'); // 处理 ℃ 和 °C
-        line = line.replace(/°F/g, '\\ \\degree\\rm{F}'); // 处理 °F
+        line = line.replace(/℃|°C/g, '\\ \\degree\\mathrm{C}'); // 处理 ℃ 和 °C
+        line = line.replace(/°F/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
         line = line.replace(/\\gt|>|＞/g, '\\gt '); // 处理 > 和 ＞
         line = line.replace(/\\lt|<|＜/g, '\\lt '); // 处理 < 和 ＜
         line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
@@ -525,7 +525,7 @@ const TextToLatex = {
         line = line.replace(/\\dot/g, '\\overset{\\bullet}'); // 处理 \dot
         line = line.replace(/π|\\pi/g, '\\mathrm{π}'); // 处理 π
         line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
-        line = line.replace(/(\d+)\\rm/g, '$1\\rm\\ '); // 处理数字后面的 \rm
+        line = line.replace(/(\d+)\\mathrm/g, '$1\\mathrm\\ '); // 处理数字后面的 \mathrm
         line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min'); // 处理 m/min
         return line;
     },
@@ -550,17 +550,17 @@ const TextToLatex = {
         
         // 处理括号内的单位（带^指数）
         line = line.replace(/\((\s*)((?:${unitsPattern}))(\^[0-9]+)?(\s*)\)/g, (_, p1, unit, exp, p4) => {
-            return `${p1}(\\rm{${unit}${exp || ''}})${p4}`;
+            return `${p1}(\\mathrm{${unit}${exp || ''}})${p4}`;
         });
 
         // 处理数字后的单位（带^指数）
         line = line.replace(new RegExp(`(\\d+)(\\s*)(${unitsPattern})(\\^[0-9]+)?`, 'g'), (_, num, space, unit, exp) => {
-            return `${num}\\rm{${unit}${exp || ''}}`;
+            return `${num}\\mathrm{${unit}${exp || ''}}`;
         });
 
-        // 处理单独的单位（非数字后），排除已处理的\rm{}
+        // 处理单独的单位（非数字后），排除已处理的\mathrm{}
         const unitPattern = new RegExp(
-            `(\\\\rm\\{[^}]*})|\\b(${unitsPattern})(\\^\\d+)?\\b`,
+            `(\\\\mathrm\\{[^}]*})|\\b(${unitsPattern})(\\^\\d+)?\\b`,
             'g'
         );
         
@@ -568,7 +568,7 @@ const TextToLatex = {
             if (rmGroup) {
                 return rmGroup;
             }
-            return `\\rm{${unit}${exp || ''}}`;
+            return `\\mathrm{${unit}${exp || ''}}`;
         });
     }
 };
