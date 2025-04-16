@@ -445,7 +445,7 @@ const TextToLatex = {
         let lines = text.split('\n');
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★☆▲●◆=\{\}\|\s\%\:\/π\w]+)/g, '$$$1$$');
+            line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★☆▲●◆=\{\}\s\%\:\/π\w]+)/g, '$$$1$$');
             if (line.endsWith('.$')) {
                 line = line.slice(0, -1);
             }
