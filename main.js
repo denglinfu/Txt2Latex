@@ -145,6 +145,40 @@ function findAndReplaceAll() {
     inputText.value = newContent;
 }
 
+// 切换输出框查找替换框的显示状态
+function toggleFindReplaceOutput() {
+    const findReplaceBox = document.getElementById('findReplaceBoxOutput');
+    findReplaceBox.style.display = findReplaceBox.style.display === 'none' ? 'block' : 'none';
+}
+
+// 查找并替换输出框内容（一次）
+function findAndReplaceOutput() {
+    const output = document.getElementById('outputText');
+    const findText = document.getElementById('findTextOutput').value;
+    const replaceText = document.getElementById('replaceTextOutput').value;
+    
+    if (findText === '') return;
+    
+    const content = output.textContent;
+    const newContent = content.replace(findText, replaceText);
+    output.textContent = newContent;
+    highlightLatex();
+}
+
+// 查找并替换输出框内容（全部）
+function findAndReplaceAllOutput() {
+    const output = document.getElementById('outputText');
+    const findText = document.getElementById('findTextOutput').value;
+    const replaceText = document.getElementById('replaceTextOutput').value;
+    
+    if (findText === '') return;
+    
+    const content = output.textContent;
+    const newContent = content.replaceAll(findText, replaceText);
+    output.textContent = newContent;
+    highlightLatex();
+}
+
 // 历史记录功能
 function addToHistory(record) {
     let history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
@@ -543,9 +577,18 @@ const TextToLatex = {
     },
 
     convertUnits(line) {
-        const units = ['km/h', 'm/s', 'm/min', 'mm', 'cm', 'dm', 'm', 'km', 'g', 'kg', 't', 's', 'min', 'h', 'mL', 'L', 'ml'];
+        // 将单位分为两类：始终处理的单位和可选处理的单位
+        const alwaysUnits = ['km/h', 'm/s', 'm/min', 'mm', 'cm', 'dm', 'km', 'kg', 'mL', 'ml'];
+        const optionalUnits = ['m', 'g', 't', 's', 'h', 'L'];
+        
+        // 根据复选框状态确定要处理的单位
+        let unitsToProcess = [...alwaysUnits];
+        if (document.getElementById('treatAsUnits').checked) {
+            unitsToProcess.push(...optionalUnits);
+        }
+        
         // 按长度降序排序，避免短单位匹配到长单位的一部分
-        const sortedUnits = units.sort((a, b) => b.length - a.length);
+        const sortedUnits = unitsToProcess.sort((a, b) => b.length - a.length);
         const unitsPattern = sortedUnits.join('|');
         
         // 处理括号内的单位（带^指数）
