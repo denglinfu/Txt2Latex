@@ -46,10 +46,16 @@
                     <input type="checkbox" id="treatAsUnits" checked style="margin-left: 10px;" />
                 </div>
                 <div id="findReplaceBox" class="find-replace-box" style="display: none;">
-                    <input type="text" id="findText" placeholder="查找内容...">
-                    <input type="text" id="replaceText" placeholder="替换为...">
-                    <button onclick="findAndReplace()">替换</button>
-                    <button onclick="findAndReplaceAll()">全部替换</button>
+                    <div class="find-replace-inputs">
+                        <div class="input-group">
+                            <input type="text" id="findText" placeholder="查找内容...">
+                            <input type="text" id="replaceText" placeholder="替换为...">
+                        </div>
+                        <div class="button-group">
+                            <button onclick="findAndReplace()">替换</button>
+                            <button onclick="findAndReplaceAll()">全部替换</button>
+                        </div>
+                    </div>
                 </div>
                 <textarea id="inputText" placeholder="在此输入要转换的内容..."></textarea>
             </div>
@@ -62,10 +68,16 @@
                     <button onclick="toggleFindReplaceOutput()" class="editor-header-btn">🔍</button>
                 </div>
                 <div id="findReplaceBoxOutput" class="find-replace-box" style="display: none;">
-                    <input type="text" id="findTextOutput" placeholder="查找内容...">
-                    <input type="text" id="replaceTextOutput" placeholder="替换为...">
-                    <button onclick="findAndReplaceOutput()">替换</button>
-                    <button onclick="findAndReplaceAllOutput()">全部替换</button>
+                    <div class="find-replace-inputs">
+                        <div class="input-group">
+                            <input type="text" id="findTextOutput" placeholder="查找内容...">
+                            <input type="text" id="replaceTextOutput" placeholder="替换为...">
+                        </div>
+                        <div class="button-group">
+                            <button onclick="findAndReplaceOutput()">替换</button>
+                            <button onclick="findAndReplaceAllOutput()">全部替换</button>
+                        </div>
+                    </div>
                 </div>
                 <pre id="outputText" class="output-area" contenteditable="true"></pre>
             </div>

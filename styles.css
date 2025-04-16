@@ -503,3 +503,35 @@ button:active {
 .overlay.active {
     display: block;
 }
+
+.find-replace-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.find-replace-inputs .input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+}
+
+.find-replace-inputs .input-group input {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: auto;
+    flex: 1;
+}
+
+.find-replace-inputs .button-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.find-replace-inputs .button-group button {
+    padding: 5px 10px;
+    white-space: nowrap;
+}
