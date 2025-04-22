@@ -563,6 +563,8 @@ const TextToLatex = {
         line = line.replace(/(\d+)\\mathrm/g, '$1\\ \\mathrm'); // 处理数字后面的 \mathrm
         line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min'); // 处理 m/min
         line = line.replace(/\/line/g, '\\overline'); // 处理 /line
+        line = line.replace(/²/g, '^2'); // 处理 ²
+        line = line.replace(/³/g, '^3'); // 处理 ³
         return line;
     },
 
