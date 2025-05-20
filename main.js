@@ -565,6 +565,29 @@ const TextToLatex = {
         line = line.replace(/\/line/g, '\\overline'); // 处理 /line
         line = line.replace(/²/g, '^2'); // 处理 ²
         line = line.replace(/³/g, '^3'); // 处理 ³
+        // 处理希腊字母
+        line = line.replace(/α|\\alpha/g, '\\alpha '); // 处理 \alpha
+        line = line.replace(/β|\\beta/g, '\\beta '); // 处理 \beta
+        line = line.replace(/γ|\\gamma/g, '\\gamma '); // 处理 \gamma
+        line = line.replace(/δ|\\delta/g, '\\delta '); // 处理 \delta
+        line = line.replace(/ε|\\epsilon/g, '\\epsilon '); // 处理 \epsilon
+        line = line.replace(/ζ|\\zeta/g, '\\zeta '); // 处理 \zeta
+        line = line.replace(/η|\\eta/g, '\\eta '); // 处理 \eta
+        line = line.replace(/θ|\\theta/g, '\\theta '); // 处理 \theta
+        line = line.replace(/ι|\\iota/g, '\\iota '); // 处理 \iota
+        line = line.replace(/κ|\\kappa/g, '\\kappa '); // 处理 \kappa
+        line = line.replace(/λ|\\lambda/g, '\\lambda '); // 处理 \lambda
+        line = line.replace(/μ|\\mu/g, '\\mu '); // 处理 \mu
+        line = line.replace(/ν|\\nu/g, '\\nu '); // 处理 \nu
+        line = line.replace(/ξ|\\xi/g, '\\xi '); // 处理 \xi
+        line = line.replace(/ο|\\omicron/g, '\\omicron '); // 处理 \omicron
+        line = line.replace(/ρ|\\rho/g, '\\rho '); // 处理 \rho
+        line = line.replace(/σ|\\sigma/g, '\\sigma '); // 处理 \sigma
+        line = line.replace(/ω|\\omega/g, '\\omega '); // 处理 \omega
+        line = line.replace(/φ|\\phi/g, '\\phi '); // 处理 \phi
+        line = line.replace(/ψ|\\psi/g, '\\psi '); // 处理 \psi
+        line = line.replace(/χ|\\chi/g, '\\chi '); // 处理 \chi
+
         return line;
     },
 
