@@ -488,7 +488,15 @@ const TextToLatex = {
         return lines.join('\n');
     },
 
+    processAbsoluteValue(line) {
+        // 修改正则表达式，使用否定前瞻来避免匹配已经处理过的模式
+        const regex = /\|(?!\\right)([^|]+)(?<!\\left)\|/g;
+        return line.replace(regex, '\\left|$1\\right|');
+    },
+
     processTextToLaTeX(line) {
+
+
         // \$删除 $ 符号
         // \\,删除 \, 符号
         // \\left删除 \left 关键字
@@ -587,7 +595,8 @@ const TextToLatex = {
         line = line.replace(/φ|\\phi/g, '\\phi '); // 处理 \phi
         line = line.replace(/ψ|\\psi/g, '\\psi '); // 处理 \psi
         line = line.replace(/χ|\\chi/g, '\\chi '); // 处理 \chi
-
+        // 在其他处理之后处理绝对值
+        line = this.processAbsoluteValue(line);
         return line;
     },
 
