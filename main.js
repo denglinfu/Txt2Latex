@@ -489,9 +489,37 @@ const TextToLatex = {
     },
 
     processAbsoluteValue(line) {
-        // 修改正则表达式，使用否定前瞻来避免匹配已经处理过的模式
-        const regex = /\|(?!\\right)([^|]+)(?<!\\left)\|/g;
-        return line.replace(regex, '\\left|$1\\right|');
+        // 首先检查是否包含 l|
+        if (line.includes('l|')) {
+            // 步骤1：将 l| 替换为 \left|
+            line = line.replace(/l\|/g, '\\left|');
+            
+            // 步骤2：将未处理的 | 替换为 \right|，但要避免处理已经是 \left| 的情况
+            let positions = [];
+            let regex = /\|/g;
+            let match;
+            
+            // 找出所有单独的 | 的位置
+            while ((match = regex.exec(line)) !== null) {
+                // 确保这个 | 不是 \left| 的一部分
+                let prefix = line.substring(Math.max(0, match.index - 5), match.index);
+                if (!prefix.endsWith('left')) {
+                    positions.push(match.index);
+                }
+            }
+            
+            // 从后向前替换，以避免位置改变影响其他替换
+            for (let i = positions.length - 1; i >= 0; i--) {
+                let pos = positions[i];
+                line = line.slice(0, pos) + '\\right|' + line.slice(pos + 1);
+            }
+            
+            return line;
+        } else {
+            // 如果没有 l|，使用原有逻辑
+            const regex = /\|(?!\\right)([^|]+)(?<!\\left)\|/g;
+            return line.replace(regex, '\\left|$1\\right|');
+        }
     },
 
     processTextToLaTeX(line) {
