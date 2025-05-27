@@ -250,6 +250,12 @@ function toggleTempStorage() {
     togglePanel('tempStoragePanel');
 }
 
+function toggleFavorites() {
+    const panel = document.getElementById('favoritesPanel');
+    panel.classList.toggle('active');
+    loadFavorites();
+}
+
 document.getElementById('overlay').addEventListener('click', function() {
     const allPanels = document.querySelectorAll('.side-panel');
     allPanels.forEach(panel => panel.classList.remove('active'));
@@ -432,6 +438,8 @@ document.addEventListener('click', (e) => {
     const historyBtn = document.querySelector('.history-btn');
     const tempStoragePanel = document.getElementById('tempStoragePanel');
     const tempStorageBtn = document.querySelector('.temp-storage-btn');
+    const favoritesPanel = document.getElementById('favoritesPanel');
+    const favoritesBtn = document.querySelector('button[onclick="toggleFavorites()"]');
     
     // 处理历史记录面板
     if (historyPanel.classList.contains('active') && 
@@ -445,6 +453,13 @@ document.addEventListener('click', (e) => {
         !tempStoragePanel.contains(e.target) && 
         !tempStorageBtn.contains(e.target)) {
         tempStoragePanel.classList.remove('active');
+    }
+    
+    // 处理收藏夹面板
+    if (favoritesPanel.classList.contains('active') && 
+        !favoritesPanel.contains(e.target) && 
+        !favoritesBtn.contains(e.target)) {
+        favoritesPanel.classList.remove('active');
     }
 });
 
@@ -814,16 +829,111 @@ function chulifangcheng() {
     Utils.copyText();
 }
 
-function copyBrackets() {
-    const brackets = '$\\left(\\ \\ \\ \\ \\ \\right)$';
-    navigator.clipboard.writeText(brackets).catch(err => {
-        console.error('复制失败:', err);
+// 收藏夹相关函数
+function toggleFavorites() {
+    const panel = document.getElementById('favoritesPanel');
+    panel.classList.toggle('active');
+    loadFavorites();
+}
+
+function addFavoriteInput() {
+    const favoritesList = document.getElementById('favoritesList');
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'favorite-item';
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'favorite-input';
+    input.addEventListener('change', saveFavorites);
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-favorite';
+    copyBtn.textContent = '复制';
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(input.value).catch(err => {
+            console.error('复制失败:', err);
+        });
+    };
+    
+    itemDiv.appendChild(input);
+    itemDiv.appendChild(copyBtn);
+    favoritesList.appendChild(itemDiv);
+    saveFavorites();
+}
+
+function removeFavoriteInput() {
+    const favoritesList = document.getElementById('favoritesList');
+    if (favoritesList.lastChild) {
+        favoritesList.removeChild(favoritesList.lastChild);
+        saveFavorites();
+    }
+}
+
+function saveFavorites() {
+    const favorites = [];
+    document.querySelectorAll('.favorite-input').forEach(input => {
+        favorites.push(input.value);
+    });
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function loadFavorites() {
+    const favoritesList = document.getElementById('favoritesList');
+    favoritesList.innerHTML = '';
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    favorites.forEach(text => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'favorite-item';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'favorite-input';
+        input.value = text;
+        input.addEventListener('change', saveFavorites);
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-favorite';
+        copyBtn.textContent = '复制';
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(input.value).catch(err => {
+                console.error('复制失败:', err);
+            });
+        };
+        
+        itemDiv.appendChild(input);
+        itemDiv.appendChild(copyBtn);
+        favoritesList.appendChild(itemDiv);
     });
 }
 
-function copyPi() {
-    const piText = '（$\\mathrm{π}$取$3.14$）';
-    navigator.clipboard.writeText(piText).catch(err => {
-        console.error('复制失败:', err);
-    });
-}
+// 修改现有的点击空白处关闭面板的事件监听器
+document.addEventListener('click', (e) => {
+    const historyPanel = document.getElementById('historyPanel');
+    const historyBtn = document.querySelector('.history-btn');
+    const tempStoragePanel = document.getElementById('tempStoragePanel');
+    const tempStorageBtn = document.querySelector('.temp-storage-btn');
+    const favoritesPanel = document.getElementById('favoritesPanel');
+    const favoritesBtn = document.querySelector('button[onclick="toggleFavorites()"]');
+    
+    // 处理历史记录面板
+    if (historyPanel.classList.contains('active') && 
+        !historyPanel.contains(e.target) && 
+        !historyBtn.contains(e.target)) {
+        historyPanel.classList.remove('active');
+    }
+    
+    // 处理暂存内容面板
+    if (tempStoragePanel.classList.contains('active') && 
+        !tempStoragePanel.contains(e.target) && 
+        !tempStorageBtn.contains(e.target)) {
+        tempStoragePanel.classList.remove('active');
+    }
+    
+    // 处理收藏夹面板
+    if (favoritesPanel.classList.contains('active') && 
+        !favoritesPanel.contains(e.target) && 
+        !favoritesBtn.contains(e.target)) {
+        favoritesPanel.classList.remove('active');
+    }
+});
