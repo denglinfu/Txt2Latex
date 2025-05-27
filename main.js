@@ -813,3 +813,17 @@ function chulifangcheng() {
     output.textContent = finalText;
     Utils.copyText();
 }
+
+function copyBrackets() {
+    const brackets = '$\\left(\\ \\ \\ \\ \\ \\right)$';
+    navigator.clipboard.writeText(brackets).catch(err => {
+        console.error('复制失败:', err);
+    });
+}
+
+function copyPi() {
+    const piText = '（$\\mathrm{π}$取$3.14$）';
+    navigator.clipboard.writeText(piText).catch(err => {
+        console.error('复制失败:', err);
+    });
+}
