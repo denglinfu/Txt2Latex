@@ -434,33 +434,28 @@ function parseFraction(str) {
 
 // 修改现有的点击空白处关闭面板的事件监听器
 document.addEventListener('click', (e) => {
-    const historyPanel = document.getElementById('historyPanel');
-    const historyBtn = document.querySelector('.history-btn');
-    const tempStoragePanel = document.getElementById('tempStoragePanel');
-    const tempStorageBtn = document.querySelector('.temp-storage-btn');
-    const favoritesPanel = document.getElementById('favoritesPanel');
-    const favoritesBtn = document.querySelector('button[onclick="toggleFavorites()"]');
+    const panels = [
+        {
+            panel: document.getElementById('historyPanel'),
+            btn: document.querySelector('.history-btn')
+        },
+        {
+            panel: document.getElementById('tempStoragePanel'),
+            btn: document.querySelector('.temp-storage-btn')
+        },
+        {
+            panel: document.getElementById('favoritesPanel'),
+            btn: document.querySelector('button[onclick="toggleFavorites()"]')
+        }
+    ];
     
-    // 处理历史记录面板
-    if (historyPanel.classList.contains('active') && 
-        !historyPanel.contains(e.target) && 
-        !historyBtn.contains(e.target)) {
-        historyPanel.classList.remove('active');
-    }
-    
-    // 处理暂存内容面板
-    if (tempStoragePanel.classList.contains('active') && 
-        !tempStoragePanel.contains(e.target) && 
-        !tempStorageBtn.contains(e.target)) {
-        tempStoragePanel.classList.remove('active');
-    }
-    
-    // 处理收藏夹面板
-    if (favoritesPanel.classList.contains('active') && 
-        !favoritesPanel.contains(e.target) && 
-        !favoritesBtn.contains(e.target)) {
-        favoritesPanel.classList.remove('active');
-    }
+    panels.forEach(({panel, btn}) => {
+        if (panel.classList.contains('active') && 
+            !panel.contains(e.target) && 
+            !btn.contains(e.target)) {
+            panel.classList.remove('active');
+        }
+    });
 });
 
 // 初始化
@@ -894,7 +889,7 @@ function loadFavorites() {
         
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-favorite';
-        copyBtn.textContent = '复制';
+        copyBtn.textContent = '📋';
         copyBtn.onclick = () => {
             navigator.clipboard.writeText(input.value).catch(err => {
                 console.error('复制失败:', err);
@@ -909,31 +904,26 @@ function loadFavorites() {
 
 // 修改现有的点击空白处关闭面板的事件监听器
 document.addEventListener('click', (e) => {
-    const historyPanel = document.getElementById('historyPanel');
-    const historyBtn = document.querySelector('.history-btn');
-    const tempStoragePanel = document.getElementById('tempStoragePanel');
-    const tempStorageBtn = document.querySelector('.temp-storage-btn');
-    const favoritesPanel = document.getElementById('favoritesPanel');
-    const favoritesBtn = document.querySelector('button[onclick="toggleFavorites()"]');
+    const panels = [
+        {
+            panel: document.getElementById('historyPanel'),
+            btn: document.querySelector('.history-btn')
+        },
+        {
+            panel: document.getElementById('tempStoragePanel'),
+            btn: document.querySelector('.temp-storage-btn')
+        },
+        {
+            panel: document.getElementById('favoritesPanel'),
+            btn: document.querySelector('button[onclick="toggleFavorites()"]')
+        }
+    ];
     
-    // 处理历史记录面板
-    if (historyPanel.classList.contains('active') && 
-        !historyPanel.contains(e.target) && 
-        !historyBtn.contains(e.target)) {
-        historyPanel.classList.remove('active');
-    }
-    
-    // 处理暂存内容面板
-    if (tempStoragePanel.classList.contains('active') && 
-        !tempStoragePanel.contains(e.target) && 
-        !tempStorageBtn.contains(e.target)) {
-        tempStoragePanel.classList.remove('active');
-    }
-    
-    // 处理收藏夹面板
-    if (favoritesPanel.classList.contains('active') && 
-        !favoritesPanel.contains(e.target) && 
-        !favoritesBtn.contains(e.target)) {
-        favoritesPanel.classList.remove('active');
-    }
+    panels.forEach(({panel, btn}) => {
+        if (panel.classList.contains('active') && 
+            !panel.contains(e.target) && 
+            !btn.contains(e.target)) {
+            panel.classList.remove('active');
+        }
+    });
 });

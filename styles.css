@@ -470,7 +470,69 @@ button:active {
     background: rgba(2, 136, 209, 0.2);
 }
 
-/* 添加以下样式 */
+/* 收藏夹面板的样式 */
+.favorites-header {
+    background-color: #2196F3;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1976D2;
+}
+
+.favorites-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.favorites-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.favorites-buttons button {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.favorites-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.favorites-buttons .icon-button {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorites-buttons .icon-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: none;
+}
+
+.favorites-list {
+    padding: 15px;
+    overflow-y: auto;
+}
+
+/* 添加侧边面板样式 */
 .side-panel {
     position: fixed;
     left: -300px; /* 初始状态隐藏在左侧 */
@@ -536,57 +598,76 @@ button:active {
     white-space: nowrap;
 }
 
-.favorites-panel {
-    width: 300px;
-    right: -300px;
-    transition: right 0.3s ease;
-}
-
-.favorites-panel.active {
-    right: 0;
-}
-
-.favorites-header {
+/* 图标按钮样式 */
+.icon-button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.favorites-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.favorites-list {
-    padding: 10px;
-    overflow-y: auto;
-    height: calc(100% - 60px);
-}
-
-.favorite-item {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.favorite-input {
-    flex: 1;
-    padding: 5px;
-    border: 1px solid #ccc;
+    justify-content: center;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
 }
 
-.copy-favorite {
-    padding: 5px 10px;
-    background: #4CAF50;
+.icon-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: none;
+}
+
+/* 编辑器头部操作按钮样式 */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.copy-button {
+    font-size: 16px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: none;
+}
+
+/* 收藏夹列表项样式 */
+.favorite-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.favorite-item input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.favorite-item .copy-icon {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
-.copy-favorite:hover {
-    background: #45a049;
+.favorite-item .copy-icon:hover {
+    background: #1976D2;
+    transform: none;
 }

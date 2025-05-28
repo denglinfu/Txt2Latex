@@ -35,7 +35,6 @@
             <button onclick="processWithWrap(biaogechuli)">📊 表格处理</button>
             <button onclick="processWithWrap(Utils.chulifenduan)">📑 处理分段</button>
             <button onclick="processWithWrap(Utils.chuliyuandaima)">💻 源代码处理</button>
-            <button onclick="Utils.copyText()">📋 复制文本</button>
         </div>
 
         <div class="editor-container">
@@ -66,7 +65,10 @@
             <div class="editor-box">
                 <div class="editor-header">
                     LaTeX 输出
-                    <button onclick="toggleFindReplaceOutput()" class="editor-header-btn">🔍</button>
+                    <div class="header-actions">
+                        <button onclick="Utils.copyText()" class="icon-button copy-button">📋</button>
+                        <button onclick="toggleFindReplaceOutput()" class="editor-header-btn">🔍</button>
+                    </div>
                 </div>
                 <div id="findReplaceBoxOutput" class="find-replace-box" style="display: none;">
                     <div class="find-replace-inputs">
@@ -140,11 +142,16 @@
         <div class="favorites-header">
             <h3>收藏夹</h3>
             <div class="favorites-buttons">
-                <button onclick="addFavoriteInput()" class="add-favorite">添加</button>
-                <button onclick="removeFavoriteInput()" class="remove-favorite">删除</button>
+                <button onclick="addFavoriteInput()" class="icon-button">+</button>
+                <button onclick="removeFavoriteInput()" class="icon-button">−</button>
             </div>
         </div>
-        <div id="favoritesList" class="favorites-list"></div>
+        <div id="favoritesList" class="favorites-list">
+            <div class="favorite-item">
+    <input type="text" value="收藏的内容">
+    <button class="copy-icon">📋</button>
+</div>
+        </div>
     </div>
 
     <div id="overlay" class="overlay"></div>
