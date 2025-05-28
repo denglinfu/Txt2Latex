@@ -843,7 +843,7 @@ function addFavoriteInput() {
     
     const copyBtn = document.createElement('button');
     copyBtn.className = 'copy-favorite';
-    copyBtn.textContent = '复制';
+    copyBtn.textContent = '📋';
     copyBtn.onclick = () => {
         navigator.clipboard.writeText(input.value).catch(err => {
             console.error('复制失败:', err);
