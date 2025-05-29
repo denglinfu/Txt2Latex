@@ -24,7 +24,6 @@
                 <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
                 <button onclick="toggleFavorites()" class="history-btn">⭐ 收藏夹</button>
                 <button onclick="toggleCalculator()" class="calculator-btn">🔢 计算器</button>
-                <button onclick="toggleTempStorage()" class="temp-storage-btn">📦 暂存内容</button>
             </div>
         </div>
         
@@ -97,14 +96,6 @@
         <div id="historyList" class="history-list"></div>
     </div>
 
-    <div id="tempStoragePanel" class="side-panel temp-storage-panel">
-        <div class="temp-storage-header">
-            <h3>暂存内容</h3>
-            <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
-        </div>
-        <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
-    </div>
-
     <div id="calculatorPanel" class="side-panel calculator-panel">
         <div class="calculator-header">
             <h3>计算器</h3>
@@ -139,18 +130,30 @@
     </div>
 
     <div id="favoritesPanel" class="side-panel favorites-panel">
-        <div class="favorites-header">
-            <h3>收藏夹</h3>
-            <div class="favorites-buttons">
-                <button onclick="addFavoriteInput()" class="icon-button">+</button>
-                <button onclick="removeFavoriteInput()" class="icon-button">−</button>
+        <!-- 收藏夹部分 -->
+        <div class="favorites-section">
+            <div class="favorites-header">
+                <h3>收藏夹</h3>
+                <div class="favorites-buttons">
+                    <button onclick="addFavoriteInput()" class="icon-button">+</button>
+                    <button onclick="removeFavoriteInput()" class="icon-button">−</button>
+                </div>
+            </div>
+            <div id="favoritesList" class="favorites-list">
+                <div class="favorite-item">
+                    <input type="text" value="收藏的内容">
+                    <button class="copy-icon">📋</button>
+                </div>
             </div>
         </div>
-        <div id="favoritesList" class="favorites-list">
-            <div class="favorite-item">
-    <input type="text" value="收藏的内容">
-    <button class="copy-icon">📋</button>
-</div>
+        
+        <!-- 暂存内容部分 -->
+        <div class="temp-storage-section">
+            <div class="temp-storage-header">
+                <h3>暂存内容</h3>
+                <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
+            </div>
+            <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
         </div>
     </div>
 

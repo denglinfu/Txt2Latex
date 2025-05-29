@@ -470,66 +470,85 @@ button:active {
     background: rgba(2, 136, 209, 0.2);
 }
 
-/* 收藏夹面板的样式 */
-.favorites-header {
-    background-color: #2196F3;
-    color: white;
+/* 收藏夹面板样式 */
+.favorites-panel {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: white;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
     padding: 15px;
+    box-sizing: border-box;
+}
+
+.favorites-panel.active {
+    left: 0;
+}
+
+.favorites-header {
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #1976D2;
 }
 
-.favorites-header h3 {
-    margin: 0;
-    font-size: 1.2em;
+.favorites-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    width: 100%;
+    min-width: 0;
 }
 
-.favorites-buttons {
+.favorite-item {
     display: flex;
-    gap: 6px;
-    align-items: center;
+    gap: 8px;
+    align-items: center; 
+    margin-bottom: 10px;
+    flex-wrap: nowrap; /* 防止元素换行 */
+    width: 100%; /* 确保占满容器宽度 */
+    min-width: 0; /* 允许容器在必要时缩小 */
 }
 
-.favorites-buttons button {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    padding: 5px 10px;
+.favorite-item input {
+    flex: 1;
+    min-width: 0; /* 允许输入框在必要时缩小 */
+    width: auto; /* 让输入框自适应宽度 */
+    padding: 8px;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 14px;
 }
 
-.favorites-buttons button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.favorites-buttons .icon-button {
+.favorite-item .copy-icon {
+    flex: 0 0 28px; /* 固定宽度，不允许缩放 */
     width: 28px;
     height: 28px;
-    font-size: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.favorites-buttons .icon-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: none;
-}
-
-.favorites-list {
-    padding: 15px;
-    overflow-y: auto;
+.clear-favorites {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background: rgba(255,255,255,0.2);
 }
 
 /* 添加侧边面板样式 */
@@ -639,12 +658,17 @@ button:active {
 .favorite-item {
     display: flex;
     gap: 8px;
-    align-items: center;
+    align-items: center; 
     margin-bottom: 10px;
+    flex-wrap: nowrap; /* 防止元素换行 */
+    width: 100%; /* 确保占满容器宽度 */
+    min-width: 0; /* 允许容器在必要时缩小 */
 }
 
 .favorite-item input {
     flex: 1;
+    min-width: 0; /* 允许输入框在必要时缩小 */
+    width: auto; /* 让输入框自适应宽度 */
     padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -652,6 +676,7 @@ button:active {
 }
 
 .favorite-item .copy-icon {
+    flex: 0 0 28px; /* 固定宽度，不允许缩放 */
     width: 28px;
     height: 28px;
     padding: 0;
@@ -667,7 +692,57 @@ button:active {
     transition: all 0.2s;
 }
 
-.favorite-item .copy-icon:hover {
-    background: #1976D2;
-    transform: none;
+/* 确保父容器也不会导致换行 */
+.favorites-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* 添加收藏夹按钮容器样式 */
+.favorites-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 修改收藏夹头部样式 */
+.favorites-header {
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 图标按钮样式调整 */
+.favorites-header .icon-button {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+}
+
+.favorites-section, .temp-storage-section {
+    flex: 1;
+    padding: 10px;
+}
+
+.favorites-section {
+    border-bottom: 1px solid #ddd;
+}
+
+.temp-storage-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.temp-storage-section textarea {
+    flex: 1;
+    margin-top: 10px;
+    resize: none;
 }
