@@ -533,8 +533,6 @@ const TextToLatex = {
     },
 
     processTextToLaTeX(line) {
-
-
         // \$删除 $ 符号
         // \\,删除 \, 符号
         // \\left删除 \left 关键字
@@ -812,6 +810,8 @@ function fenxiaohuhua() {
 
 function chulifangcheng() {
     let inputText = document.getElementById('inputText').value;
+        // 先去掉 & 符号
+    inputText = inputText.replace(/&/g, '');
     let latexText = TextToLatex.processTextToLaTeX(inputText);
     let processedText = TextToLatex.processLineBreaks(latexText);
     let addsplitText = EquationProcessor.addsplit(processedText);
