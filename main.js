@@ -542,8 +542,7 @@ const TextToLatex = {
         // [^\S\n]+删除非换行的空白字符
         // \\+$删除行尾的反斜杠
         // \\rm\mathrm删除 \rm\mathrm 关键字
-        // &删除 & 符号
-        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm|\\mathrm|&/gm, '');    // 删除所有 $ 符号和 \, 符号
+        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm|\\mathrm/gm, '');    // 删除所有 $ 符号和 \, 符号
         // 将 \frac 和 \tfrac 替换为 \dfrac
         line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
         // 替换 "{...} \over {...}" 分数格式为 \dfrac
