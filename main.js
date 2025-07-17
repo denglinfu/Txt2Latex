@@ -110,7 +110,10 @@ function showToast(message) {
 
 // 清空输入框
 function clearInput() {
-    document.getElementById('inputText').value = '';
+    const inputText = document.getElementById('inputText');
+    inputText.value = '';
+    inputText.focus();
+    updateHistoryPanel();
 }
 
 // 切换查找替换框的显示状态
@@ -599,7 +602,7 @@ const TextToLatex = {
         line = line.replace(/\\square|\\Box/g, '□'); // 处理 □
         line = line.replace(/~|\\sim/g, '\\sim '); // 处理 ~ 和 ~
         line = line.replace(/⊥|\\perp/g, '\\perp '); // 处理 ⊥ 和 ⊥
-        line = line.replace(/∥/g, '∥'); // 处理 ∥
+        line = line.replace(/∥|\/\\!\//g, '//'); // 处理 ∥
         line = line.replace(/\\dot/g, '\\overset{\\bullet}'); // 处理 \dot
         line = line.replace(/π|\\pi/g, '\\mathrm{π}'); // 处理 π
         line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
