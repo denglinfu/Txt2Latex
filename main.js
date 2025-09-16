@@ -554,7 +554,7 @@ const TextToLatex = {
         line = line.replace(/（/g, '(');    // 替换小括号
         line = line.replace(/）/g, ')');    // 替换小括号
         line = line.replace(/＝/g, '=');    // 替换等号
-        line = line.replace(/﹣|－|−/g, '-');    // 替换减号
+        line = line.replace(/﹣|－|−|―/g, '-');    // 替换减号
         line = line.replace(/＋/g, '+');    // 替换加号
         line = line.replace(/［/g, '[');    // 替换中括号
         line = line.replace(/］/g, ']');      // 替换中括号
