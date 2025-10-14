@@ -408,8 +408,7 @@ function Fraction(numerator, denominator = 1) {
     this.toDecimal = function(precision = 10) {
         return Number((this.numerator / this.denominator).toPrecision(precision));
     };
-    
-    this.toMixed = function() {
+this.toMixed = function() {
         if (Math.abs(this.numerator) < this.denominator) return '无';
         const whole = Math.floor(Math.abs(this.numerator) / this.denominator);
         const remainder = Math.abs(this.numerator) % this.denominator;
@@ -702,7 +701,9 @@ const TableProcessor = {
         const lines = inputStr.split('\n');
         let latex = '\\boxed{\n\\begin{array}{c|c}\n';
         lines.forEach((line, index) => {
-            latex += line.trim();
+            // 新增处理逻辑：分割单元格并添加花括号
+            const cells = line.trim().split('&').map(cell => `{${cell.trim()}}`);
+            latex += cells.join(' & ');
             if (index < lines.length - 1) {
                 latex += ' \\\\ \\hline\n';
             }
