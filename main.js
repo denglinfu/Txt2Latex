@@ -574,8 +574,8 @@ const TextToLatex = {
         // 处理单位
         line = this.convertUnits(line); // 处理单位
         // 为空括号和空方括号增加空白
-        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ \\ )');    // 替换空括号
-        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
+        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ \\ \\ )');    // 替换空括号
+        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
         // 替换数学运算符为 LaTeX  
         line = line.replace(/×|\\times/g, '\\times ');  // 替换乘号
         line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
@@ -699,9 +699,25 @@ const TextToLatex = {
 const TableProcessor = {
     processInput(inputStr) {
         const lines = inputStr.split('\n');
-        let latex = '\\boxed{\n\\begin{array}{c|c}\n';
+        
+        // 计算最大列数（基于 & 的数量）
+        let maxColumns = 1; // 默认至少1列
+        lines.forEach(line => {
+            const columns = line.trim().split('&').length;
+            if (columns > maxColumns) {
+                maxColumns = columns;
+            }
+        });
+        
+        // 生成数组格式：c 的数量比 & 数量多一个，| 的数量与 & 数量一致
+        let arrayFormat = 'c'; // 第一个 c
+        for (let i = 1; i < maxColumns; i++) {
+            arrayFormat += '|c'; // 每个后续列添加 |c
+        }
+        
+        let latex = `\\boxed{\n\\begin{array}{${arrayFormat}}\n`;
         lines.forEach((line, index) => {
-            // 新增处理逻辑：分割单元格并添加花括号
+            // 分割单元格并添加花括号
             const cells = line.trim().split('&').map(cell => `{${cell.trim()}}`);
             latex += cells.join(' & ');
             if (index < lines.length - 1) {
