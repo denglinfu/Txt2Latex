@@ -497,7 +497,7 @@ const TextToLatex = {
         let lines = text.split('\n');
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★☆▲●■◆◇=\{\}\|\s\%\:\/π\w]+)/g, '$$$1$$');
+            line = line.replace(/([\[\]0-9a-zA-Z\(\)\\.,+\-\_\^△□○★☆▲●■◆◇=\{\}\|\s\%\:\/π\w<>]+)/g, '$$$1$$');
             if (line.endsWith('.$')) {
                 line = line.slice(0, -1);
             }
@@ -574,8 +574,8 @@ const TextToLatex = {
         // 处理单位
         line = this.convertUnits(line); // 处理单位
         // 为空括号和空方括号增加空白
-        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ \\ \\ )');    // 替换空括号
-        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
+        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ )');    // 替换空括号
+        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
         // 替换数学运算符为 LaTeX  
         line = line.replace(/×|\\times/g, '\\times ');  // 替换乘号
         line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
@@ -591,8 +591,8 @@ const TextToLatex = {
         line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
         line = line.replace(/℃|°C/g, '\\ \\degree\\mathrm{C}'); // 处理 ℃ 和 °C
         line = line.replace(/°F/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
-        line = line.replace(/\\gt|>|＞/g, '\\gt '); // 处理 > 和 ＞
-        line = line.replace(/\\lt|<|＜/g, '\\lt '); // 处理 < 和 ＜
+        line = line.replace(/\\gt|>|＞/g, '>'); // 处理 > 和 ＞，直接替换为 > 符号
+        line = line.replace(/\\lt|<|＜/g, '<'); // 处理 < 和 ＜，直接替换为 < 符号
         line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
         line = line.replace(/≥|\\geqslant/g, '\\geqslant '); // 处理 ≥ 和 ≥
         line = line.replace(/≤|\\leqslant/g, '\\leqslant '); // 处理 ≤ 和 ≤
