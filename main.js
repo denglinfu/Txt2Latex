@@ -574,8 +574,8 @@ const TextToLatex = {
         // 处理单位
         line = this.convertUnits(line); // 处理单位
         // 为空括号和空方括号增加空白
-        line = line.replace(/\(\)/g, '(\\ \\ \\ \\ \\ \\ )');    // 替换空括号
-        line = line.replace(/\[\]/g, '[\\ \\ \\ \\ \\ \\ ]');   // 替换空方括号
+        line = line.replace(/\(\)/g, '(\\qquad)');    // 替换空括号
+        line = line.replace(/\[\]/g, '[\\qquad]');   // 替换空方括号
         // 替换数学运算符为 LaTeX  
         line = line.replace(/×|\\times/g, '\\times ');  // 替换乘号
         line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
