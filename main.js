@@ -577,7 +577,7 @@ const TextToLatex = {
         line = line.replace(/\(\)/g, '(\\qquad)');    // 替换空括号
         line = line.replace(/\[\]/g, '[\\qquad]');   // 替换空方括号
         // 替换数学运算符为 LaTeX  
-        line = line.replace(/×|\\times/g, '\\times ');  // 替换乘号
+        line = line.replace(/×|✕|✖️|\\times/g, '\\times ');  // 替换乘号
         line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
         line = line.replace(/\(/g, '\\left(');  // 替换左括号
         line = line.replace(/\)/g, '\\right)'); // 替换右括号
