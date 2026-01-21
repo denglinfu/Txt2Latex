@@ -590,7 +590,7 @@ const TextToLatex = {
         line = line.replace(/\{\\dfrac\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 {\dfrac{a}{b}}
         line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
         line = line.replace(/℃|°C/g, '\\ \\degree\\mathrm{C}'); // 处理 ℃ 和 °C
-        line = line.replace(/°F/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
+        line = line.replace(/°F|℉/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
         line = line.replace(/\\gt|>|＞/g, '>'); // 处理 > 和 ＞，直接替换为 > 符号
         line = line.replace(/\\lt|<|＜/g, '<'); // 处理 < 和 ＜，直接替换为 < 符号
         line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
