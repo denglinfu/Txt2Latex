@@ -616,8 +616,6 @@ const TextToLatex = {
         line = line.replace(/\/line/g, '\\overline'); // 处理 /line
         line = line.replace(/²/g, '^2'); // 处理 ²
         line = line.replace(/³/g, '^3'); // 处理 ³
-        line = line.replace(/○|〇/g, '\\bigcirc '); // 处理 ○ 和 〇
-
         // 处理希腊字母
         line = line.replace(/α|\\alpha/g, '\\alpha '); // 处理 \alpha
         line = line.replace(/β|\\beta/g, '\\beta '); // 处理 \beta
