@@ -1,4 +1,46 @@
-// 布局调整功能
+// ==================== 侧边栏面板控制 ====================
+document.addEventListener('DOMContentLoaded', () => {
+    const inputText = document.getElementById('inputText');
+    const outputText = document.getElementById('outputText');
+    const charCount = document.querySelector('.char-count');
+    const outputCharCount = document.querySelector('.output-char-count');
+    
+    if (inputText) {
+        inputText.addEventListener('input', () => {
+            if (charCount) {
+                charCount.textContent = inputText.value.length + ' 字符';
+            }
+        });
+    }
+    
+    if (outputText) {
+        const updateOutputCount = () => {
+            if (outputCharCount) {
+                outputCharCount.textContent = outputText.textContent.length + ' 字符';
+            }
+            // 触发错误检查
+            validateAndDisplayErrors(outputText.textContent);
+        };
+        
+        // 监听输出文本的变化
+        const observer = new MutationObserver(updateOutputCount);
+        observer.observe(outputText, { 
+            childList: true, 
+            subtree: true, 
+            characterData: true 
+        });
+    }
+
+    // 侧边栏遮罩点击事件 - 点击遮罩关闭所有侧边栏
+    const overlay = document.getElementById('sidePanelOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            switchTab('editor');
+        });
+    }
+});
+
+// ==================== 布局调整功能 ====================
 let isResizing = false;
 const container = document.querySelector('.editor-container');
 const handle = document.querySelector('.resize-handle');
@@ -13,10 +55,10 @@ const initResize = (e) => {
 };
 
 const resize = (e) => {
-    if (!isResizing) return;
+    if (!isResizing || !container) return;
     
     const rect = container.getBoundingClientRect();
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 900) {
         const xPos = e.clientX - rect.left;
         container.style.gridTemplateColumns = `${xPos}px 8px 1fr`;
     } else {
@@ -49,11 +91,13 @@ function processWithWrap(processor) {
                 word-break: break-word !important;
             `;
             loader.remove();
+            showToast('✓ 处理完成！');
         }, 100);
     } catch (error) {
         output.innerHTML = `<span class="error">处理出错: ${error.message}</span>`;
         console.error(error);
         loader.remove();
+        showToast('✗ 处理失败：' + error.message);
     }
 }
 
@@ -97,11 +141,15 @@ function showToast(message) {
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.85);
         color: white;
-        padding: 12px 24px;
+        padding: 14px 24px;
         border-radius: 8px;
         animation: fadeInOut 2.5s;
+        font-weight: 500;
+        font-size: 14px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     `;
     toast.textContent = message;
     document.body.appendChild(toast);
@@ -110,16 +158,22 @@ function showToast(message) {
 
 // 清空输入框
 function clearInput() {
-    const inputText = document.getElementById('inputText');
-    inputText.value = '';
-    inputText.focus();
-    updateHistoryPanel();
+    if (confirm('确定要清空输入区域吗？')) {
+        const inputText = document.getElementById('inputText');
+        inputText.value = '';
+        inputText.focus();
+        updateHistoryPanel();
+        showToast('✓ 已清空');
+    }
 }
 
 // 切换查找替换框的显示状态
 function toggleFindReplace() {
     const findReplaceBox = document.getElementById('findReplaceBox');
     findReplaceBox.style.display = findReplaceBox.style.display === 'none' ? 'block' : 'none';
+    if (findReplaceBox.style.display === 'block') {
+        document.getElementById('findText').focus();
+    }
 }
 
 // 查找并替换一次
@@ -128,14 +182,23 @@ function findAndReplace() {
     const findText = document.getElementById('findText').value;
     let replaceText = document.getElementById('replaceText').value;
     
-    // 新增替换符号转义
-    replaceText = replaceText.replace(/\\n/g, '\n');
+    if (findText === '') {
+        showToast('请输入要查找的内容');
+        return;
+    }
     
-    if (findText === '') return;
+    replaceText = replaceText.replace(/\\n/g, '\n');
     
     const content = inputText.value;
     const newContent = content.replace(findText, replaceText);
+    
+    if (newContent === content) {
+        showToast('未找到匹配内容');
+        return;
+    }
+    
     inputText.value = newContent;
+    showToast('✓ 已替换一处');
 }
 
 // 查找并替换所有
@@ -144,20 +207,33 @@ function findAndReplaceAll() {
     const findText = document.getElementById('findText').value;
     let replaceText = document.getElementById('replaceText').value;
     
-    // 新增替换符号转义
+    if (findText === '') {
+        showToast('请输入要查找的内容');
+        return;
+    }
+    
     replaceText = replaceText.replace(/\\n/g, '\n');
     
-    if (findText === '') return;
-    
     const content = inputText.value;
+    const matches = (content.match(new RegExp(findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
     const newContent = content.replaceAll(findText, replaceText);
+    
+    if (newContent === content) {
+        showToast('未找到匹配内容');
+        return;
+    }
+    
     inputText.value = newContent;
+    showToast(`✓ 已替换 ${matches} 处`);
 }
 
 // 切换输出框查找替换框的显示状态
 function toggleFindReplaceOutput() {
     const findReplaceBox = document.getElementById('findReplaceBoxOutput');
     findReplaceBox.style.display = findReplaceBox.style.display === 'none' ? 'block' : 'none';
+    if (findReplaceBox.style.display === 'block') {
+        document.getElementById('findTextOutput').focus();
+    }
 }
 
 // 查找并替换输出框内容（一次）
@@ -166,12 +242,22 @@ function findAndReplaceOutput() {
     const findText = document.getElementById('findTextOutput').value;
     const replaceText = document.getElementById('replaceTextOutput').value;
     
-    if (findText === '') return;
+    if (findText === '') {
+        showToast('请输入要查找的内容');
+        return;
+    }
     
     const content = output.textContent;
     const newContent = content.replace(findText, replaceText);
+    
+    if (newContent === content) {
+        showToast('未找到匹配内容');
+        return;
+    }
+    
     output.textContent = newContent;
     highlightLatex();
+    showToast('✓ 已替换一处');
 }
 
 // 查找并替换输出框内容（全部）
@@ -180,19 +266,30 @@ function findAndReplaceAllOutput() {
     const findText = document.getElementById('findTextOutput').value;
     const replaceText = document.getElementById('replaceTextOutput').value;
     
-    if (findText === '') return;
+    if (findText === '') {
+        showToast('请输入要查找的内容');
+        return;
+    }
     
     const content = output.textContent;
+    const matches = (content.match(new RegExp(findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
     const newContent = content.replaceAll(findText, replaceText);
+    
+    if (newContent === content) {
+        showToast('未找到匹配内容');
+        return;
+    }
+    
     output.textContent = newContent;
     highlightLatex();
+    showToast(`✓ 已替换 ${matches} 处`);
 }
 
 // 历史记录功能
 function addToHistory(record) {
     let history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
     history.unshift(record);
-    history = history.slice(0, 10);
+    history = history.slice(0, 50); // 保留最近50条
     localStorage.setItem('latexHistory', JSON.stringify(history));
     updateHistoryPanel();
 }
@@ -201,10 +298,15 @@ function updateHistoryPanel() {
     const historyList = document.getElementById('historyList');
     const history = JSON.parse(localStorage.getItem('latexHistory') || '[]');
     
+    if (history.length === 0) {
+        historyList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无历史记录</div>';
+        return;
+    }
+    
     historyList.innerHTML = history.map((record, index) => `
-        <div class="history-item" onclick="restoreHistory(${index})">
-            <div class="history-item-time">${new Date(record.timestamp).toLocaleString()}</div>
-            <div class="history-item-preview">${record.input.substring(0, 50)}...</div>
+        <div class="history-item" onclick="restoreHistory(${index})" title="点击恢复">
+            <div class="history-item-time">${new Date(record.timestamp).toLocaleString('zh-CN')}</div>
+            <div class="history-item-preview">${record.input.substring(0, 60)}${record.input.length > 60 ? '...' : ''}</div>
         </div>
     `).join('');
 }
@@ -217,17 +319,26 @@ function restoreHistory(index) {
     const output = document.getElementById('outputText');
     output.textContent = record.output;
     highlightLatex();
+    switchTab('editor');
+    showToast('✓ 已恢复');
 }
 
 function clearHistory() {
-    localStorage.removeItem('latexHistory');
-    updateHistoryPanel();
+    if (confirm('确定要清空所有历史记录吗？')) {
+        localStorage.removeItem('latexHistory');
+        updateHistoryPanel();
+        showToast('✓ 历史记录已清空');
+    }
 }
 
+// ==================== 侧边栏面板控制 ====================
 function togglePanel(panelId) {
     const panel = document.getElementById(panelId);
-    const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('sidePanelOverlay');
     const allPanels = document.querySelectorAll('.side-panel');
+    
+    // 检查当前面板是否已激活
+    const isCurrentActive = panel.classList.contains('active');
     
     // 关闭其他面板
     allPanels.forEach(p => {
@@ -239,8 +350,9 @@ function togglePanel(panelId) {
     // 切换当前面板
     panel.classList.toggle('active');
     
-    // 切换遮罩层
-    if (panel.classList.contains('active')) {
+    // 控制遮罩
+    const hasActivePanels = document.querySelectorAll('.side-panel.active').length > 0;
+    if (hasActivePanels) {
         overlay.classList.add('active');
     } else {
         overlay.classList.remove('active');
@@ -249,37 +361,48 @@ function togglePanel(panelId) {
 
 function toggleHistory() {
     togglePanel('historyPanel');
+    updateHistoryPanel();
 }
 
 function toggleCalculator() {
     togglePanel('calculatorPanel');
 }
 
-function toggleTempStorage() {
-    togglePanel('tempStoragePanel');
-}
-
 function toggleFavorites() {
-    const panel = document.getElementById('favoritesPanel');
-    panel.classList.toggle('active');
+    togglePanel('favoritesPanel');
     loadFavorites();
 }
 
-document.getElementById('overlay').addEventListener('click', function() {
-    const allPanels = document.querySelectorAll('.side-panel');
-    allPanels.forEach(panel => panel.classList.remove('active'));
-    this.classList.remove('active');
-});
-
-function clearTempStorage() {
-    const tempStorage = document.getElementById('tempStorageArea');
-    tempStorage.value = '';
+// ==================== 标签页切换功能 ====================
+function switchTab(tabName) {
+    // 此函数保留用于后向兼容，但现在使用侧边栏系统
+    switch(tabName) {
+        case 'history':
+            toggleHistory();
+            break;
+        case 'calculator':
+            toggleCalculator();
+            break;
+        case 'favorites':
+            toggleFavorites();
+            break;
+        case 'editor':
+        default:
+            // 关闭所有侧边栏
+            const overlay = document.getElementById('sidePanelOverlay');
+            document.querySelectorAll('.side-panel').forEach(p => {
+                p.classList.remove('active');
+            });
+            overlay.classList.remove('active');
+            break;
+    }
 }
 
 // 计算器功能
 function clearCalculator() {
     document.getElementById('calculatorInput').value = '';
     document.getElementById('calculatorOutput').textContent = '';
+    showToast('✓ 已清空');
 }
 
 function appendToCalculator(value) {
@@ -290,6 +413,11 @@ function appendToCalculator(value) {
 function calculateResult() {
     const input = document.getElementById('calculatorInput').value;
     const output = document.getElementById('calculatorOutput');
+    
+    if (!input.trim()) {
+        showToast('请输入算式');
+        return;
+    }
     
     try {
         let result;
@@ -348,9 +476,12 @@ function calculateResult() {
             `小数：${preciseResult}\n` +
             `分数：\\dfrac{${fraction.n}}{${fraction.d}}\n` +
             `带分数：${mixedNumber}`;
+        
+        showToast('✓ 计算完成');
 
     } catch (error) {
-        output.textContent = `错误: ${error.message}`;
+        output.textContent = `✗ 错误: ${error.message}`;
+        showToast('✗ 计算出错');
     }
 }
 
@@ -445,7 +576,7 @@ document.addEventListener('click', (e) => {
     const panels = [
         {
             panel: document.getElementById('historyPanel'),
-            btn: document.querySelector('.history-btn')
+            btn: document.querySelector('[data-tab="history"]')
         },
         {
             panel: document.getElementById('tempStoragePanel'),
@@ -453,14 +584,14 @@ document.addEventListener('click', (e) => {
         },
         {
             panel: document.getElementById('favoritesPanel'),
-            btn: document.querySelector('button[onclick="toggleFavorites()"]')
+            btn: document.querySelector('[data-tab="favorites"]')
         }
     ];
     
     panels.forEach(({panel, btn}) => {
-        if (panel.classList.contains('active') && 
+        if (panel && panel.classList.contains('active') && 
             !panel.contains(e.target) && 
-            !btn.contains(e.target)) {
+            btn && !btn.contains(e.target)) {
             panel.classList.remove('active');
         }
     });
@@ -468,22 +599,32 @@ document.addEventListener('click', (e) => {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    handle.addEventListener('mousedown', initResize);
+    const handle = document.querySelector('.resize-handle');
+    if (handle) {
+        handle.addEventListener('mousedown', initResize);
+    }
     updateHistoryPanel();
     
     // 输入框Tab支持
-    document.getElementById('inputText').addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const start = e.target.selectionStart;
-            const end = e.target.selectionEnd;
-            e.target.value = 
-                e.target.value.substring(0, start) + 
-                '    ' + 
-                e.target.value.substring(end);
-            e.target.selectionStart = e.target.selectionEnd = start + 4;
-        }
-    });
+    const inputText = document.getElementById('inputText');
+    if (inputText) {
+        inputText.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                e.target.value = 
+                    e.target.value.substring(0, start) + 
+                    '    ' + 
+                    e.target.value.substring(end);
+                e.target.selectionStart = e.target.selectionEnd = start + 4;
+            }
+        });
+    }
+    
+    // 初始化标签页
+    switchTab('editor');
+    loadFavorites();
 });
 
 // 文本转LaTeX模块
@@ -616,6 +757,7 @@ const TextToLatex = {
         line = line.replace(/\/line/g, '\\overline'); // 处理 /line
         line = line.replace(/²/g, '^2'); // 处理 ²
         line = line.replace(/³/g, '^3'); // 处理 ³
+        line = line.replace(/♥|♡/g, '\\heartsuit'); // 处理 ♥
         // 处理希腊字母
         line = line.replace(/α|\\alpha/g, '\\alpha '); // 处理 \alpha
         line = line.replace(/β|\\beta/g, '\\beta '); // 处理 \beta
@@ -759,14 +901,25 @@ const EquationProcessor = {
 // 辅助功能模块
 const Utils = {
     copyText() {
-        var outputText = document.getElementById("outputText");
-        var textArea = document.createElement("textarea");
-        var textContent = outputText.innerText;
-        textArea.value = textContent.replace(/<br>/g, "\r\n");
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("Copy");
-        textArea.remove();
+        const outputText = document.getElementById("outputText");
+        const textContent = outputText.innerText || outputText.textContent;
+        
+        navigator.clipboard.writeText(textContent).then(() => {
+            showToast('✓ 已复制到剪贴板');
+        }).catch(err => {
+            // 降级方案
+            const textArea = document.createElement("textarea");
+            textArea.value = textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand("Copy");
+                showToast('✓ 已复制到剪贴板');
+            } catch (err) {
+                showToast('✗ 复制失败，请手动复制');
+            }
+            document.body.removeChild(textArea);
+        });
     },
 
     chulifenduan() {
@@ -774,6 +927,7 @@ const Utils = {
         var equations = inputText.value.split('=');
         var result = equations.join('\n=');
         inputText.value = result;
+        showToast('✓ 已按等号分段');
     },
 
     chuliyuandaima() {
@@ -785,12 +939,19 @@ const Utils = {
         text = text.replace(/\[input=type:blank,size:4\]\[\/input\]/g, '______');
         text = text.replace(/\$\$/g, '$');
         inputText.value = text;
+        showToast('✓ 已处理源代码');
     }
 };
 
 // 处理函数
 function chuliwenben() {
-    let inputText = document.getElementById('inputText').value;
+    const input = document.getElementById('inputText').value;
+    if (!input.trim()) {
+        showToast('请输入内容');
+        return;
+    }
+    
+    let inputText = input;
     let latexText = TextToLatex.processTextToLaTeX(inputText);
     let processedText = TextToLatex.processLineBreaks(latexText);
     let finalText = TextToLatex.addDollarSigns(processedText);
@@ -802,6 +963,11 @@ function chuliwenben() {
 
 function biaogechuli() {
     const inputText = document.getElementById('inputText').value;
+    if (!inputText.trim()) {
+        showToast('请输入内容');
+        return;
+    }
+    
     try {
         const latexText = TextToLatex.processTextToLaTeX(inputText);
         const processedText = TextToLatex.processLineBreaks(latexText);
@@ -813,13 +979,17 @@ function biaogechuli() {
         Utils.copyText();
     } catch (error) {
         console.error('处理文本时发生错误:', error);
-        alert('处理文本时发生错误，请检查输入格式是否正确');
+        showToast('✗ 表格处理失败，请检查输入格式');
     }
 }
 
 function fenxiaohuhua() {
-    // 获取输入文本
     const inputText = document.getElementById('inputText').value;
+    if (!inputText.trim()) {
+        showToast('请输入内容');
+        return;
+    }
+    
     // 先进行 LaTeX 处理
     const processedText = TextToLatex.processTextToLaTeX(inputText);
     // 将处理后的文本设置到计算器输入框
@@ -835,8 +1005,14 @@ function fenxiaohuhua() {
 }
 
 function chulifangcheng() {
-    let inputText = document.getElementById('inputText').value;
-        // 先去掉 & 符号
+    const inputValue = document.getElementById('inputText').value;
+    if (!inputValue.trim()) {
+        showToast('请输入内容');
+        return;
+    }
+    
+    let inputText = inputValue;
+    // 先去掉 & 符号
     inputText = inputText.replace(/&/g, '');
     let latexText = TextToLatex.processTextToLaTeX(inputText);
     let processedText = TextToLatex.processLineBreaks(latexText);
@@ -850,12 +1026,6 @@ function chulifangcheng() {
 }
 
 // 收藏夹相关函数
-function toggleFavorites() {
-    const panel = document.getElementById('favoritesPanel');
-    panel.classList.toggle('active');
-    loadFavorites();
-}
-
 function addFavoriteInput() {
     const favoritesList = document.getElementById('favoritesList');
     const itemDiv = document.createElement('div');
@@ -863,21 +1033,27 @@ function addFavoriteInput() {
     
     const input = document.createElement('input');
     input.type = 'text';
-    input.className = 'favorite-input';
+    input.placeholder = '输入收藏内容...';
     input.addEventListener('change', saveFavorites);
     
     const copyBtn = document.createElement('button');
     copyBtn.className = 'copy-favorite';
     copyBtn.textContent = '📋';
     copyBtn.onclick = () => {
-        navigator.clipboard.writeText(input.value).catch(err => {
-            console.error('复制失败:', err);
-        });
+        if (input.value) {
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('✓ 已复制');
+            }).catch(err => {
+                showToast('✗ 复制失败');
+                console.error('复制失败:', err);
+            });
+        }
     };
     
     itemDiv.appendChild(input);
     itemDiv.appendChild(copyBtn);
     favoritesList.appendChild(itemDiv);
+    input.focus();
     saveFavorites();
 }
 
@@ -886,21 +1062,35 @@ function removeFavoriteInput() {
     if (favoritesList.lastChild) {
         favoritesList.removeChild(favoritesList.lastChild);
         saveFavorites();
+        showToast('✓ 已删除');
     }
 }
 
 function saveFavorites() {
     const favorites = [];
-    document.querySelectorAll('.favorite-input').forEach(input => {
-        favorites.push(input.value);
+    document.querySelectorAll('.favorite-item input').forEach(input => {
+        if (input.value) {
+            favorites.push(input.value);
+        }
     });
     localStorage.setItem('favorites', JSON.stringify(favorites));
 }
 
 function loadFavorites() {
     const favoritesList = document.getElementById('favoritesList');
+    if (!favoritesList) return;
+    
     favoritesList.innerHTML = '';
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    if (favorites.length === 0) {
+        // 添加默认项或空消息
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'padding: 20px; text-align: center; color: #999;';
+        emptyMsg.textContent = '暂无收藏';
+        favoritesList.appendChild(emptyMsg);
+        return;
+    }
     
     favorites.forEach(text => {
         const itemDiv = document.createElement('div');
@@ -908,7 +1098,6 @@ function loadFavorites() {
         
         const input = document.createElement('input');
         input.type = 'text';
-        input.className = 'favorite-input';
         input.value = text;
         input.addEventListener('change', saveFavorites);
         
@@ -916,7 +1105,10 @@ function loadFavorites() {
         copyBtn.className = 'copy-favorite';
         copyBtn.textContent = '📋';
         copyBtn.onclick = () => {
-            navigator.clipboard.writeText(input.value).catch(err => {
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('✓ 已复制');
+            }).catch(err => {
+                showToast('✗ 复制失败');
                 console.error('复制失败:', err);
             });
         };
@@ -927,28 +1119,173 @@ function loadFavorites() {
     });
 }
 
-// 修改现有的点击空白处关闭面板的事件监听器
-document.addEventListener('click', (e) => {
-    const panels = [
-        {
-            panel: document.getElementById('historyPanel'),
-            btn: document.querySelector('.history-btn')
-        },
-        {
-            panel: document.getElementById('tempStoragePanel'),
-            btn: document.querySelector('.temp-storage-btn')
-        },
-        {
-            panel: document.getElementById('favoritesPanel'),
-            btn: document.querySelector('button[onclick="toggleFavorites()"]')
+// ==================== LaTeX 错误检查器 ====================
+class LaTeXValidator {
+    constructor() {
+        this.errors = [];
+    }
+
+    validate(text) {
+        this.errors = [];
+        if (!text) return this.errors;
+
+        // 逐个检查
+        this.checkBracketMatching(text);
+        this.checkEnvironments(text);
+        this.checkCommonErrors(text);
+        this.checkChineseInMath(text);
+
+        return this.errors;
+    }
+
+    checkBracketMatching(text) {
+        const pairs = [
+            { open: '{', close: '}', name: '花括号' },
+            { open: '[', close: ']', name: '方括号' },
+            { open: '(', close: ')', name: '圆括号' }
+        ];
+
+        pairs.forEach(pair => {
+            const open = (text.match(new RegExp('\\' + pair.open, 'g')) || []).length;
+            const close = (text.match(new RegExp('\\' + pair.close, 'g')) || []).length;
+
+            if (open !== close) {
+                this.errors.push({
+                    type: 'bracket',
+                    icon: '🔴',
+                    title: `${pair.name}不匹配`,
+                    message: `左括号：${open} 个，右括号：${close} 个`,
+                    suggestion: `请检查 ${pair.name}的数量是否相等`,
+                    fixable: false
+                });
+            }
+        });
+    }
+
+    checkEnvironments(text) {
+        // 检查 \begin{} \end{} 匹配
+        const beginMatches = text.match(/\\begin\{([^}]+)\}/g) || [];
+        const endMatches = text.match(/\\end\{([^}]+)\}/g) || [];
+
+        if (beginMatches.length !== endMatches.length) {
+            this.errors.push({
+                type: 'environment',
+                icon: '🔴',
+                title: '环境不匹配',
+                message: `\\begin 命令：${beginMatches.length} 个，\\end 命令：${endMatches.length} 个`,
+                suggestion: '每个 \\begin{} 必须有对应的 \\end{}',
+                fixable: false
+            });
         }
-    ];
-    
-    panels.forEach(({panel, btn}) => {
-        if (panel.classList.contains('active') && 
-            !panel.contains(e.target) && 
-            !btn.contains(e.target)) {
-            panel.classList.remove('active');
+
+        // 检查特定环境
+        const commonEnvs = ['equation', 'align', 'array', 'matrix'];
+        commonEnvs.forEach(env => {
+            const beginCount = (text.match(new RegExp(`\\\\begin\\{${env}\\*?\\}`, 'g')) || []).length;
+            const endCount = (text.match(new RegExp(`\\\\end\\{${env}\\*?\\}`, 'g')) || []).length;
+            
+            if (beginCount > 0 && beginCount !== endCount) {
+                this.errors.push({
+                    type: 'environment',
+                    icon: '🔴',
+                    title: `${env} 环境未闭合`,
+                    message: `${beginCount} 个 \\begin{${env}} 但只有 ${endCount} 个 \\end{${env}}`,
+                    suggestion: `添加缺失的 \\end{${env}}`,
+                    fixable: false
+                });
+            }
+        });
+    }
+
+    checkCommonErrors(text) {
+        // 检查常见的拼写错误
+        const commonMistakes = [
+            { pattern: /\\frac\s*\{/, correct: '\\frac{', message: '\\frac 后应直接跟 {' },
+            { pattern: /\\sqrt\s*\{/, correct: '\\sqrt{', message: '\\sqrt 后应直接跟 {' },
+            { pattern: /\$\$.*\$(?!\$)/, correct: '$$ ... $$', message: '双美元符号应成对出现' },
+        ];
+
+        // 检查未闭合的 $ 符号
+        const dollarCount = (text.match(/(?<!\\)\$/g) || []).length;
+        if (dollarCount % 2 !== 0) {
+            this.errors.push({
+                type: 'math',
+                icon: '🟡',
+                title: '数学模式符号不匹配',
+                message: `未配对的 $ 符号：${dollarCount} 个（应为偶数）`,
+                suggestion: '检查是否有未闭合的 $ 或 $$ 标记',
+                fixable: false
+            });
         }
-    });
-});
+
+        // 检查 \\ 后面是否正确
+        if (/\\\\[^\n]/.test(text)) {
+            const match = text.match(/\\\\([^\n\s\\])/);
+            if (match) {
+                this.errors.push({
+                    type: 'syntax',
+                    icon: '🟡',
+                    title: '换行符使用错误',
+                    message: `\\\\ 后不应直接跟字符，当前为：\\\\${match[1]}`,
+                    suggestion: '使用 \\\\ 换行后应留空格或新行',
+                    fixable: false
+                });
+            }
+        }
+    }
+
+    checkChineseInMath(text) {
+        // 在数学模式中检查中文
+        const mathBlocks = text.match(/\$\$[\s\S]*?\$\$|\$[^\$]*\$/g) || [];
+        let hasChineseInMath = false;
+
+        mathBlocks.forEach(block => {
+            if (/[\u4e00-\u9fa5]/.test(block)) {
+                hasChineseInMath = true;
+            }
+        });
+
+        if (hasChineseInMath) {
+            this.errors.push({
+                type: 'warning',
+                icon: '🟠',
+                title: '数学模式中包含中文',
+                message: '在 $ ... $ 或 $$ ... $$ 中发现中文字符',
+                suggestion: '中文应写在数学模式外，或使用 \\text{} 包装',
+                fixable: false
+            });
+        }
+    }
+}
+
+// 全局验证器实例
+const validator = new LaTeXValidator();
+
+// 错误检查和显示函数
+function validateAndDisplayErrors(text) {
+    const errors = validator.validate(text);
+    const errorPanel = document.getElementById('errorPanel');
+    const errorList = document.getElementById('errorList');
+
+    if (errors.length === 0) {
+        errorPanel.style.display = 'none';
+        return;
+    }
+
+    errorPanel.style.display = 'block';
+    errorList.innerHTML = errors.map((error, index) => `
+        <div class="error-item">
+            <div class="error-item-icon">${error.icon}</div>
+            <div class="error-item-content">
+                <div class="error-item-title">${error.title}</div>
+                <div class="error-item-message">${error.message}</div>
+                ${error.suggestion ? `<div class="error-item-suggestion">💡 建议：${error.suggestion}</div>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleErrorPanel() {
+    const errorPanel = document.getElementById('errorPanel');
+    errorPanel.style.display = errorPanel.style.display === 'none' ? 'block' : 'none';
+}

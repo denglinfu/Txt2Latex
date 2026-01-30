@@ -18,146 +18,175 @@
 </head>
 <body>
     <div class="container" id="mainContainer">
-        <div class="header-container">
-            <h1>LaTeX文本处理工具</h1>
-            <div class="header-buttons">
-                <button onclick="toggleHistory()" class="history-btn">📜 历史记录</button>
-                <button onclick="toggleFavorites()" class="history-btn">⭐ 收藏夹</button>
-                <button onclick="toggleCalculator()" class="calculator-btn">🔢 计算器</button>
+        <!-- 顶部导航栏 -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <h1>📐 LaTeX 文本处理工具</h1>
+                </div>
+                <div class="navbar-menu">
+                    <button class="nav-btn" onclick="toggleCalculator()" title="计算器">🔢 计算器</button>
+                    <button class="nav-btn" onclick="toggleHistory()" title="历史记录">📜 历史记录</button>
+                    <button class="nav-btn" onclick="toggleFavorites()" title="收藏夹">⭐ 收藏夹</button>
+                </div>
             </div>
-        </div>
-        
-        <div class="toolbar">
-            <button onclick="processWithWrap(chuliwenben)">📝 处理文本</button>
-            <button onclick="processWithWrap(chulifangcheng)">🧮 处理方程</button>
-            <button onclick="processWithWrap(fenxiaohuhua)">🔢 分小互化</button>
-            <button onclick="processWithWrap(biaogechuli)">📊 表格处理</button>
-            <button onclick="processWithWrap(Utils.chulifenduan)">📑 处理分段</button>
-            <button onclick="processWithWrap(Utils.chuliyuandaima)">💻 源代码处理</button>
+        </nav>
+
+        <!-- 侧边栏遮罩 -->
+        <div id="sidePanelOverlay" class="side-panel-overlay"></div>
+
+        <!-- 快速操作工具条 -->
+        <div class="quick-actions">
+            <div class="action-group">
+                <span class="action-label">快速处理：</span>
+                <button class="action-btn" onclick="processWithWrap(chuliwenben)" title="将文本转换为LaTeX格式">📝 文本</button>
+                <button class="action-btn" onclick="processWithWrap(chulifangcheng)" title="处理数学方程">🧮 方程</button>
+                <button class="action-btn" onclick="processWithWrap(fenxiaohuhua)" title="分数和小数互化">🔢 分小互化</button>
+                <button class="action-btn" onclick="processWithWrap(biaogechuli)" title="将内容转换为LaTeX表格">📊 表格</button>
+                <button class="action-btn" onclick="processWithWrap(Utils.chulifenduan)" title="按等号分段处理">📑 分段</button>
+                <button class="action-btn" onclick="processWithWrap(Utils.chuliyuandaima)" title="处理源代码中的LaTeX">💻 源代码</button>
+            </div>
         </div>
 
-        <div class="editor-container">
-            <div class="editor-box">
-                <div class="editor-header">
-                    原始文本
-                    <button onclick="clearInput()" class="editor-header-btn">🗑️</button>
-                    <button onclick="toggleFindReplace()" class="editor-header-btn">🔍</button>
-                    <input type="checkbox" id="treatAsUnits" checked style="margin-left: 10px;" />
-                </div>
-                <div id="findReplaceBox" class="find-replace-box" style="display: none;">
-                    <div class="find-replace-inputs">
-                        <div class="input-group">
-                            <input type="text" id="findText" placeholder="查找内容...">
-                            <input type="text" id="replaceText" placeholder="替换为...">
+        <!-- 主编辑器区域 -->
+        <div class="editor-wrapper">
+            <div class="editor-container">
+                <div class="editor-box">
+                    <div class="editor-header">
+                        <div class="header-title">
+                            <span>📥 输入区域</span>
+                            <span class="char-count">0 字符</span>
                         </div>
-                        <div class="button-group">
-                            <button onclick="findAndReplace()">替换</button>
-                            <button onclick="findAndReplaceAll()">全部替换</button>
-                        </div>
-                    </div>
-                </div>
-                <textarea id="inputText" placeholder="在此输入要转换的内容..."></textarea>
-            </div>
-            
-            <div class="resize-handle"></div>
-            
-            <div class="editor-box">
-                <div class="editor-header">
-                    LaTeX 输出
-                    <div class="header-actions">
-                        <button onclick="Utils.copyText()" class="icon-button copy-button">📋</button>
-                        <button onclick="toggleFindReplaceOutput()" class="editor-header-btn">🔍</button>
-                    </div>
-                </div>
-                <div id="findReplaceBoxOutput" class="find-replace-box" style="display: none;">
-                    <div class="find-replace-inputs">
-                        <div class="input-group">
-                            <input type="text" id="findTextOutput" placeholder="查找内容...">
-                            <input type="text" id="replaceTextOutput" placeholder="替换为...">
-                        </div>
-                        <div class="button-group">
-                            <button onclick="findAndReplaceOutput()">替换</button>
-                            <button onclick="findAndReplaceAllOutput()">全部替换</button>
+                        <div class="header-actions">
+                            <button onclick="clearInput()" class="icon-btn" title="清空输入">🗑️</button>
+                            <button onclick="toggleFindReplace()" class="icon-btn" title="查找替换">🔍</button>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="treatAsUnits" checked />
+                                <span>单位处理</span>
+                            </label>
                         </div>
                     </div>
+                    <div id="findReplaceBox" class="find-replace-box" style="display: none;">
+                        <div class="find-replace-inputs">
+                            <input type="text" id="findText" placeholder="查找..." class="find-input">
+                            <input type="text" id="replaceText" placeholder="替换为..." class="replace-input">
+                            <button onclick="findAndReplace()" class="small-btn">替换</button>
+                            <button onclick="findAndReplaceAll()" class="small-btn">全部</button>
+                        </div>
+                    </div>
+                    <textarea id="inputText" placeholder="在此输入要处理的内容..."></textarea>
                 </div>
-                <pre id="outputText" class="output-area" contenteditable="true"></pre>
-            </div>
-        </div>
-    </div>
-
-    <div id="watermark">Design By 付登临 | Last Updated: 2026-01-20</div>
-
-    <div id="historyPanel" class="side-panel history-panel">
-        <div class="history-header">
-            <h3>历史记录</h3>
-            <button onclick="clearHistory()" class="clear-history">清空记录</button>
-        </div>
-        <div id="historyList" class="history-list"></div>
-    </div>
-
-    <div id="calculatorPanel" class="side-panel calculator-panel">
-        <div class="calculator-header">
-            <h3>计算器</h3>
-            <button onclick="clearCalculator()" class="clear-calculator">清空</button>
-        </div>
-        <div class="calculator-content">
-            <textarea id="calculatorInput" placeholder="输入算式或LaTeX公式..."></textarea>
-            <div id="calculatorOutput" class="calculator-output"></div>
-            <div class="calculator-buttons">
-                <button onclick="appendToCalculator('7')">7</button>
-                <button onclick="appendToCalculator('8')">8</button>
-                <button onclick="appendToCalculator('9')">9</button>
-                <button onclick="appendToCalculator('/')">/</button>
-                <button onclick="appendToCalculator('4')">4</button>
-                <button onclick="appendToCalculator('5')">5</button>
-                <button onclick="appendToCalculator('6')">6</button>
-                <button onclick="appendToCalculator('*')">×</button>
-                <button onclick="appendToCalculator('1')">1</button>
-                <button onclick="appendToCalculator('2')">2</button>
-                <button onclick="appendToCalculator('3')">3</button>
-                <button onclick="appendToCalculator('-')">-</button>
-                <button onclick="appendToCalculator('0')">0</button>
-                <button onclick="appendToCalculator('.')">.</button>
-                <button onclick="appendToCalculator('(')">(</button>
-                <button onclick="appendToCalculator('+')">+</button>
-                <button onclick="appendToCalculator(')')" class="operator">)</button>
-                <button onclick="appendToCalculator('^')" class="operator">^</button>
-                <button onclick="appendToCalculator('π')" class="operator">π</button>
-                <button onclick="calculateResult()" class="equals">=</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="favoritesPanel" class="side-panel favorites-panel">
-        <!-- 收藏夹部分 -->
-        <div class="favorites-section">
-            <div class="favorites-header">
-                <h3>收藏夹</h3>
-                <div class="favorites-buttons">
-                    <button onclick="addFavoriteInput()" class="icon-button">+</button>
-                    <button onclick="removeFavoriteInput()" class="icon-button">−</button>
-                </div>
-            </div>
-            <div id="favoritesList" class="favorites-list">
-                <div class="favorite-item">
-                    <input type="text" value="收藏的内容">
-                    <button class="copy-icon">📋</button>
+                
+                <div class="resize-handle"></div>
+                
+                <div class="editor-box">
+                    <div class="editor-header">
+                        <div class="header-title">
+                            <span>📤 输出区域 (LaTeX)</span>
+                            <span class="output-char-count">0 字符</span>
+                        </div>
+                        <div class="header-actions">
+                            <button onclick="Utils.copyText()" class="icon-btn" title="复制输出">📋</button>
+                            <button onclick="toggleFindReplaceOutput()" class="icon-btn" title="查找替换">🔍</button>
+                        </div>
+                    </div>
+                    <div id="findReplaceBoxOutput" class="find-replace-box" style="display: none;">
+                        <div class="find-replace-inputs">
+                            <input type="text" id="findTextOutput" placeholder="查找..." class="find-input">
+                            <input type="text" id="replaceTextOutput" placeholder="替换为..." class="replace-input">
+                            <button onclick="findAndReplaceOutput()" class="small-btn">替换</button>
+                            <button onclick="findAndReplaceAllOutput()" class="small-btn">全部</button>
+                        </div>
+                    </div>
+                    <pre id="outputText" class="output-area" contenteditable="true"></pre>
+                    
+                    <!-- 错误检查面板 -->
+                    <div id="errorPanel" class="error-panel" style="display: none;">
+                        <div class="error-panel-header">
+                            <span class="error-icon">⚠️ 检测到问题</span>
+                            <button onclick="toggleErrorPanel()" class="close-btn" style="font-size: 14px;">✕</button>
+                        </div>
+                        <div id="errorList" class="error-list"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- 暂存内容部分 -->
-        <div class="temp-storage-section">
-            <div class="temp-storage-header">
-                <h3>暂存内容</h3>
-                <button onclick="clearTempStorage()" class="clear-temp-storage">清空暂存</button>
+
+        <!-- 计算器侧边栏 -->
+        <div id="calculatorPanel" class="side-panel calculator-panel">
+            <div class="panel-header">
+                <h2>🔢 计算器</h2>
+                <button onclick="toggleCalculator()" class="close-btn">✕</button>
             </div>
-            <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
+            <div class="panel-content">
+                <textarea id="calculatorInput" placeholder="输入算式或LaTeX公式..."></textarea>
+                <div id="calculatorOutput" class="calculator-output"></div>
+                <div class="calculator-buttons">
+                    <button onclick="appendToCalculator('7')">7</button>
+                    <button onclick="appendToCalculator('8')">8</button>
+                    <button onclick="appendToCalculator('9')">9</button>
+                    <button onclick="appendToCalculator('/')">/</button>
+                    <button onclick="appendToCalculator('4')">4</button>
+                    <button onclick="appendToCalculator('5')">5</button>
+                    <button onclick="appendToCalculator('6')">6</button>
+                    <button onclick="appendToCalculator('*')">×</button>
+                    <button onclick="appendToCalculator('1')">1</button>
+                    <button onclick="appendToCalculator('2')">2</button>
+                    <button onclick="appendToCalculator('3')">3</button>
+                    <button onclick="appendToCalculator('-')">-</button>
+                    <button onclick="appendToCalculator('0')">0</button>
+                    <button onclick="appendToCalculator('.')">.</button>
+                    <button onclick="appendToCalculator('(')">(</button>
+                    <button onclick="appendToCalculator('+')">+</button>
+                    <button onclick="appendToCalculator(')')" class="operator">)</button>
+                    <button onclick="appendToCalculator('^')" class="operator">^</button>
+                    <button onclick="appendToCalculator('π')" class="operator">π</button>
+                    <button onclick="calculateResult()" class="equals">=</button>
+                    <button onclick="clearCalculator()" class="clear">C</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 历史记录侧边栏 -->
+        <div id="historyPanel" class="side-panel history-panel">
+            <div class="panel-header">
+                <h2>📜 历史记录</h2>
+                <button onclick="toggleHistory()" class="close-btn">✕</button>
+            </div>
+            <div class="panel-content">
+                <button onclick="clearHistory()" class="action-btn danger">清空历史</button>
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </div>
+
+        <!-- 收藏夹侧边栏 -->
+        <div id="favoritesPanel" class="side-panel favorites-panel">
+            <div class="panel-header">
+                <h2>⭐ 收藏夹</h2>
+                <button onclick="toggleFavorites()" class="close-btn">✕</button>
+            </div>
+            <div class="panel-content">
+                <div class="panel-actions">
+                    <button onclick="addFavoriteInput()" class="icon-btn">➕</button>
+                    <button onclick="removeFavoriteInput()" class="icon-btn">➖</button>
+                </div>
+                <div id="favoritesList" class="favorites-list"></div>
+
+                <div class="temp-storage-section">
+                    <h3>📌 暂存内容</h3>
+                    <button onclick="clearTempStorage()" class="action-btn">清空暂存</button>
+                    <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div id="overlay" class="overlay"></div>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <span>🎨 由付登临设计 | 最后更新：2026-01-30</span>
+            <span class="version">v2.0</span>
+        </div>
+    </footer>
     
 </body>
 </html>
