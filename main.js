@@ -585,6 +585,10 @@ document.addEventListener('click', (e) => {
         {
             panel: document.getElementById('favoritesPanel'),
             btn: document.querySelector('[data-tab="favorites"]')
+        },
+        {
+            panel: document.getElementById('uncommonPanel'),
+            btn: document.querySelector('.nav-btn[title="不常用片段"]')
         }
     ];
     
@@ -1116,6 +1120,61 @@ function loadFavorites() {
         itemDiv.appendChild(input);
         itemDiv.appendChild(copyBtn);
         favoritesList.appendChild(itemDiv);
+    });
+}
+
+// 不常用片段相关函数
+function toggleUncommon() {
+    togglePanel('uncommonPanel');
+    loadUncommon();
+}
+
+function loadUncommon() {
+    const uncommonList = document.getElementById('uncommonList');
+    if (!uncommonList) return;
+    uncommonList.innerHTML = '';
+
+    // 使用全局 UNCOMMON_SNIPPETS 数据
+    const list = typeof UNCOMMON_SNIPPETS !== 'undefined' ? UNCOMMON_SNIPPETS : [];
+
+    if (!Array.isArray(list) || list.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'padding:20px; text-align:center; color:#999;';
+        emptyMsg.textContent = '暂无片段，编辑 snippets.js 添加';
+        uncommonList.appendChild(emptyMsg);
+        return;
+    }
+
+    list.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'uncommon-item';
+
+        const title = document.createElement('div');
+        title.className = 'uncommon-title';
+        title.textContent = item.title || '';
+
+        const code = document.createElement('pre');
+        code.className = 'uncommon-code';
+        code.textContent = item.code || '';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-uncommon';
+        copyBtn.title = '复制片段';
+        copyBtn.textContent = '📋';
+        copyBtn.onclick = () => {
+            const txt = item.code || '';
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast('✓ 片段已复制');
+            }).catch(err => {
+                showToast('✗ 复制失败');
+                console.error('复制片段失败:', err);
+            });
+        };
+
+        itemDiv.appendChild(title);
+        itemDiv.appendChild(code);
+        itemDiv.appendChild(copyBtn);
+        uncommonList.appendChild(itemDiv);
     });
 }
 

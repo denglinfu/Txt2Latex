@@ -15,6 +15,8 @@
     <script src="main.js" defer></script>
     <!-- 在 head 中添加 math.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.js"></script>
+    <!-- 加载片段数据 -->
+    <script src="snippets.js"></script>
 </head>
 <body>
     <div class="container" id="mainContainer">
@@ -28,6 +30,7 @@
                     <button class="nav-btn" onclick="toggleCalculator()" title="计算器">🔢 计算器</button>
                     <button class="nav-btn" onclick="toggleHistory()" title="历史记录">📜 历史记录</button>
                     <button class="nav-btn" onclick="toggleFavorites()" title="收藏夹">⭐ 收藏夹</button>
+                    <button class="nav-btn" onclick="toggleUncommon()" title="不常用片段">✂️ 片段</button>
                 </div>
             </div>
         </nav>
@@ -177,6 +180,20 @@
                     <button onclick="clearTempStorage()" class="action-btn">清空暂存</button>
                     <textarea id="tempStorageArea" placeholder="在此粘贴需要暂存的内容..."></textarea>
                 </div>
+            </div>
+        </div>
+
+        <!-- 不常用片段侧边栏 -->
+        <div id="uncommonPanel" class="side-panel uncommon-panel">
+            <div class="panel-header">
+                <h2>✂️ 不常用 LaTeX 片段</h2>
+                <button onclick="toggleUncommon()" class="close-btn">✕</button>
+            </div>
+            <div class="panel-content">
+                <div class="panel-actions">
+                    <span style="color:#888; font-size:13px;">请在 <strong>snippets.js</strong> 中编辑片段</span>
+                </div>
+                <div id="uncommonList" class="uncommon-list"></div>
             </div>
         </div>
     </div>

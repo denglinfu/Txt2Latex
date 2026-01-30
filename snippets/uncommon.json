@@ -1,0 +1,30 @@
+[
+  {
+    "title": "颜色（\u001bcolor）",
+    "code": "\\textcolor{red}{文本} 或 \\color{red}{文本}"
+  },
+  {
+    "title": "背景色（colorbox）",
+    "code": "\\colorbox{yellow}{文本}"
+  },
+  {
+    "title": "加粗",
+    "code": "\\textbf{文本}"
+  },
+  {
+    "title": "斜体",
+    "code": "\\textit{文本}"
+  },
+  {
+    "title": "下划线",
+    "code": "\\underline{文本}"
+  },
+  {
+    "title": "脚注",
+    "code": "文本\\footnote{注释内容}"
+  },
+  {
+    "title": "注释（%）",
+    "code": "% 这是注释"
+  }
+]
