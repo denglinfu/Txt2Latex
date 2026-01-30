@@ -762,7 +762,7 @@ const TextToLatex = {
         line = line.replace(/²/g, '^2 '); // 处理 ²
         line = line.replace(/³/g, '^3 '); // 处理 ³
         line = line.replace(/♥|♡/g, '\\heartsuit '); // 处理 ♥
-        line = line.replace(/♦|♢|◆/g, '\\diamondsuit '); // 处理 ♦
+        line = line.replace(/♦|♢/g, '\\diamondsuit '); // 处理 ♦
         line = line.replace(/♣|♧|♣️/g, '\\clubsuit '); // 处理 ♣
         line = line.replace(/♠|♤|♠️/g, '\\spadesuit '); // 处理 ♠
         // 处理希腊字母
