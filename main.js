@@ -440,7 +440,7 @@ function calculateResult() {
                 .replace(/\\times/g, '*')  // 处理乘号
                 .replace(/\\div/g, '/')    // 处理除号
                 .replace(/\^/g, '**')      // 处理指数
-                .replace(/\\pi|π/g, 'Math.PI') // 处理 π
+                .replace(/\\pi|π/g, 'pi') // 改为 pi
                 .replace(/\[/g, '(')        // 将中括号转换为小括号
                 .replace(/\]/g, ')');       // 将中括号转换为小括号
                 
@@ -450,7 +450,7 @@ function calculateResult() {
             let cleanInput = input.replace(/=/g, '')
                                 .replace(/\[/g, '(')
                                 .replace(/\]/g, ')')
-                                .replace(/π/g, 'Math.PI');
+                                .replace(/π/g, 'pi'); // 改为 pi
             result = math.evaluate(cleanInput);
         }
 
@@ -1070,6 +1070,14 @@ function removeFavoriteInput() {
         favoritesList.removeChild(favoritesList.lastChild);
         saveFavorites();
         showToast('✓ 已删除');
+    }
+}
+
+function clearTempStorage() {
+    const tempStorageArea = document.getElementById('tempStorageArea');
+    if (tempStorageArea) {
+        tempStorageArea.value = '';
+        showToast('✓ 暂存已清空');
     }
 }
 
