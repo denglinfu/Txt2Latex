@@ -158,13 +158,11 @@ function showToast(message) {
 
 // 清空输入框
 function clearInput() {
-    if (confirm('确定要清空输入区域吗？')) {
-        const inputText = document.getElementById('inputText');
-        inputText.value = '';
-        inputText.focus();
-        updateHistoryPanel();
-        showToast('✓ 已清空');
-    }
+    const inputText = document.getElementById('inputText');
+    inputText.value = '';
+    inputText.focus();
+    updateHistoryPanel();
+    showToast('✓ 已清空');
 }
 
 // 切换查找替换框的显示状态
@@ -685,111 +683,116 @@ const TextToLatex = {
         }
     },
 
-    processTextToLaTeX(line) {
-        // \$删除 $ 符号
-        // \\,删除 \, 符号
-        // \\left删除 \left 关键字
-        // \\right删除 \right 关键字
-        // [^\S\n]+删除非换行的空白字符
-        // \\+$删除行尾的反斜杠
-        // \\rm\mathrm删除 \rm\mathrm 关键字
-        line = line.replace(/\$|\\,|\\left|\\right|[^\S\n]+|\\+$|\\rm|\\mathrm/gm, '');    // 删除所有 $ 符号和 \, 符号
-        // 将 \frac 和 \tfrac 替换为 \dfrac
-        line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
-        // 替换 "{...} \over {...}" 分数格式为 \dfrac
-        line = line.replace(/\\over/g, '\/'); // 删除所有 \over 关键字
-        // 替换特殊符号和标点符号
-        line = line.replace(/##/g, '或');   // 替换 ##
-        line = line.replace(/：|∶/g, ':'); // 替换冒号
-        line = line.replace(/（/g, '(');    // 替换小括号
-        line = line.replace(/）/g, ')');    // 替换小括号
-        line = line.replace(/＝/g, '=');    // 替换等号
-        line = line.replace(/﹣|－|−|―/g, '-');    // 替换减号
-        line = line.replace(/＋/g, '+');    // 替换加号
-        line = line.replace(/［/g, '[');    // 替换中括号
-        line = line.replace(/］/g, ']');      // 替换中括号
-        line = line.replace(/,/g, '，');    // 替换中文逗号
-        line = line.replace(/\.$/g, '。');  // 替换句号
+    processTextToLaTeX(text) {
+        // 逐行处理文本，保留换行符
+        let lines = text.split('\n');
+        let processedLines = lines.map(line => {
+            // \$删除 $ 符号
+            // \\,删除 \, 符号
+            // \\left删除 \left 关键字
+            // \\right删除 \right 关键字
+            // [^\S\n]+删除非换行的空白字符
+            // \\+$删除行尾的反斜杠
+            // \\rm\mathrm删除 \rm\mathrm 关键字
+            line = line.replace(/\$|\\,|\\left|\\right|\s+|\\+$|\\rm|\\mathrm/g, '');    // 删除所有 $ 符号和 \, 符号
+            // 将 \frac 和 \tfrac 替换为 \dfrac
+            line = line.replace(/\\tfrac|\\frac/g, '\\dfrac'); // 删除所有 \tfrac 关键字
+            // 替换 "{...} \over {...}" 分数格式为 \dfrac
+            line = line.replace(/\\over/g, '\/'); // 删除所有 \over 关键字
+            // 替换特殊符号和标点符号
+            line = line.replace(/##/g, '或');   // 替换 ##
+            line = line.replace(/：|∶/g, ':'); // 替换冒号
+            line = line.replace(/（/g, '(');    // 替换小括号
+            line = line.replace(/）/g, ')');    // 替换小括号
+            line = line.replace(/＝/g, '=');    // 替换等号
+            line = line.replace(/﹣|－|−|―/g, '-');    // 替换减号
+            line = line.replace(/＋/g, '+');    // 替换加号
+            line = line.replace(/［/g, '[');    // 替换中括号
+            line = line.replace(/］/g, ']');      // 替换中括号
+            line = line.replace(/,/g, '，');    // 替换中文逗号
+            line = line.replace(/\.$/g, '。');  // 替换句号
 
-        // 添加将(a，b)类型替换为(a,b)的逻辑
-        line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');   // 替换中文逗号为英文逗号
+            // 添加将(a，b)类型替换为(a,b)的逻辑
+            line = line.replace(/\((\w+)\，(\w+)\)/g, '($1,$2)');   // 替换中文逗号为英文逗号
 
-        // 替换中括号和小括号
-        line = this.replaceBrackets(line);  // 替换中括号和小括号
-        // 处理单位
-        line = this.convertUnits(line); // 处理单位
-        // 为空括号和空方括号增加空白
-        line = line.replace(/\(\)/g, '(\\qquad)');    // 替换空括号
-        line = line.replace(/\[\]/g, '[\\qquad]');   // 替换空方括号
-        // 替换数学运算符为 LaTeX  
-        line = line.replace(/×|✕|✖️|\\times/g, '\\times ');  // 替换乘号
-        line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
-        line = line.replace(/\(/g, '\\left(');  // 替换左括号
-        line = line.replace(/\)/g, '\\right)'); // 替换右括号
-        line = line.replace(/\[/g, '\\left['); // 替换左方括号
-        line = line.replace(/\]/g, '\\right]'); // 替换右方括号
-        line = line.replace(/([a-zA-Z0-9]+)@([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '$1\\dfrac{$2}{$3}');
-        // 排除m/s，km/h，m/min
-        line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
-        line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
-        line = line.replace(/\{\\dfrac\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 {\dfrac{a}{b}}
-        line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
-        line = line.replace(/℃|°C/g, '\\ \\degree\\mathrm{C}'); // 处理 ℃ 和 °C
-        line = line.replace(/°F|℉/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
-        line = line.replace(/\\gt|>|＞/g, '>'); // 处理 > 和 ＞，直接替换为 > 符号
-        line = line.replace(/\\lt|<|＜/g, '<'); // 处理 < 和 ＜，直接替换为 < 符号
-        line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
-        line = line.replace(/≥|\\geqslant/g, '\\geqslant '); // 处理 ≥ 和 ≥
-        line = line.replace(/≤|\\leqslant/g, '\\leqslant '); // 处理 ≤ 和 ≤
-        line = line.replace(/\\%/g, '\%');  // 处理 \%
-        line = line.replace(/%/g, '\\% '); // 处理 %
-        line = line.replace(/∠|\\angle/g, '\\angle '); // 处理 ∠ 和 ∠
-        line = line.replace(/°|\\degree|\\circ/g, '\\degree '); // 处理 ° 和 °
-        line = line.replace(/\.\.\.|\\cdots|…|···|\\ldots/g, '\\cdots ');   // 处理 ... 和 …
-        line = line.replace(/≈|\\approx/g, '\\approx ');     // 处理 ≈ 和 ≈
-        line = line.replace(/\\varDelta|\\Delta|\\triangle|△/g, '\\triangle '); // 处理 Δ 和 △
-        line = line.replace(/▽/g, '\\bigtriangledown '); // 处理 ▽
-        line = line.replace(/\\square|\\Box/g, '□'); // 处理 □
-        line = line.replace(/~|\\sim/g, '\\sim '); // 处理 ~ 和 ~
-        line = line.replace(/⊥|\\perp/g, '\\perp '); // 处理 ⊥ 和 ⊥
-        line = line.replace(/∥|\/\\!\//g, '//'); // 处理 ∥
-        line = line.replace(/\\dot/g, '\\overset{\\bullet} '); // 处理 \dot
-        line = line.replace(/π|\\pi/g, '\\mathrm{π} '); // 处理 π
-        line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
-        line = line.replace(/(\d+)\\mathrm/g, '$1\\ \\mathrm '); // 处理数字后面的 \mathrm
-        line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min '); // 处理 m/min
-        line = line.replace(/\/line/g, '\\overline '); // 处理 /line
-        line = line.replace(/²/g, '^2 '); // 处理 ²
-        line = line.replace(/³/g, '^3 '); // 处理 ³
-        line = line.replace(/♥|♡/g, '\\heartsuit '); // 处理 ♥
-        line = line.replace(/♦|♢/g, '\\diamondsuit '); // 处理 ♦
-        line = line.replace(/♣|♧|♣️/g, '\\clubsuit '); // 处理 ♣
-        line = line.replace(/♠|♤|♠️/g, '\\spadesuit '); // 处理 ♠
-        // 处理希腊字母
-        line = line.replace(/α|\\alpha/g, '\\alpha '); // 处理 \alpha
-        line = line.replace(/β|\\beta/g, '\\beta '); // 处理 \beta
-        line = line.replace(/γ|\\gamma/g, '\\gamma '); // 处理 \gamma
-        line = line.replace(/δ|\\delta/g, '\\delta '); // 处理 \delta
-        line = line.replace(/ε|\\epsilon/g, '\\epsilon '); // 处理 \epsilon
-        line = line.replace(/ζ|\\zeta/g, '\\zeta '); // 处理 \zeta
-        line = line.replace(/η|\\eta/g, '\\eta '); // 处理 \eta
-        line = line.replace(/θ|\\theta/g, '\\theta '); // 处理 \theta
-        line = line.replace(/ι|\\iota/g, '\\iota '); // 处理 \iota
-        line = line.replace(/κ|\\kappa/g, '\\kappa '); // 处理 \kappa
-        line = line.replace(/λ|\\lambda/g, '\\lambda '); // 处理 \lambda
-        line = line.replace(/μ|\\mu/g, '\\mu '); // 处理 \mu
-        line = line.replace(/ν|\\nu/g, '\\nu '); // 处理 \nu
-        line = line.replace(/ξ|\\xi/g, '\\xi '); // 处理 \xi
-        line = line.replace(/ο|\\omicron/g, '\\omicron '); // 处理 \omicron
-        line = line.replace(/ρ|\\rho/g, '\\rho '); // 处理 \rho
-        line = line.replace(/σ|\\sigma/g, '\\sigma '); // 处理 \sigma
-        line = line.replace(/ω|\\omega/g, '\\omega '); // 处理 \omega
-        line = line.replace(/φ|\\phi/g, '\\phi '); // 处理 \phi
-        line = line.replace(/ψ|\\psi/g, '\\psi '); // 处理 \psi
-        line = line.replace(/χ|\\chi/g, '\\chi '); // 处理 \chi
-        // 在其他处理之后处理绝对值
-        line = this.processAbsoluteValue(line);
-        return line;
+            // 替换中括号和小括号
+            line = this.replaceBrackets(line);  // 替换中括号和小括号
+            // 处理单位
+            line = this.convertUnits(line); // 处理单位
+            // 为空括号和空方括号增加空白
+            line = line.replace(/\(\)/g, '(\\qquad)');    // 替换空括号
+            line = line.replace(/\[\]/g, '[\\qquad]');   // 替换空方括号
+            // 替换数学运算符为 LaTeX  
+            line = line.replace(/×|✕|✖️|\\times/g, '\\times ');  // 替换乘号
+            line = line.replace(/÷|\\div/g, '\\div ');  // 替换除号
+            line = line.replace(/\(/g, '\\left(');  // 替换左括号
+            line = line.replace(/\)/g, '\\right)'); // 替换右括号
+            line = line.replace(/\[/g, '\\left['); // 替换左方括号
+            line = line.replace(/\]/g, '\\right]'); // 替换右方括号
+            line = line.replace(/([a-zA-Z0-9]+)@([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '$1\\dfrac{$2}{$3}');
+            // 排除m/s，km/h，m/min
+            line = line.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(?<!\b(m\/s|km\/h|m\/min)\b)/g, '\\dfrac{$1}{$2}');
+            line = line.replace(/{(.*?)}\s*\/\s*{(.*?)}(?<!\bm\/s\b|\bkm\/h\b|\bm\/min\b)/g, '\\dfrac{$1}{$2}');
+            line = line.replace(/\{\\dfrac\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 {\dfrac{a}{b}}
+            line = line.replace(/\\dfrac\{\{([^{}]+)\}\{([^{}]+)\}\}/g, '\\dfrac{$1}{$2}');        // 处理 \dfrac{{a}{b}}
+            line = line.replace(/℃|°C/g, '\\ \\degree\\mathrm{C}'); // 处理 ℃ 和 °C
+            line = line.replace(/°F|℉/g, '\\ \\degree\\mathrm{F}'); // 处理 °F
+            line = line.replace(/\\gt|>|＞/g, '>'); // 处理 > 和 ＞，直接替换为 > 符号
+            line = line.replace(/\\lt|<|＜/g, '<'); // 处理 < 和 ＜，直接替换为 < 符号
+            line = line.replace(/≠|\\neq/g, '\\not= '); // 处理 ≠
+            line = line.replace(/≥|\\geqslant/g, '\\geqslant '); // 处理 ≥ 和 ≥
+            line = line.replace(/≤|\\leqslant/g, '\\leqslant '); // 处理 ≤ 和 ≤
+            line = line.replace(/\\%/g, '\%');  // 处理 \%
+            line = line.replace(/%/g, '\\% '); // 处理 %
+            line = line.replace(/∠|\\angle/g, '\\angle '); // 处理 ∠ 和 ∠
+            line = line.replace(/°|\\degree|\\circ/g, '\\degree '); // 处理 ° 和 °
+            line = line.replace(/\.\.\.|\\cdots|…|···|\\ldots/g, '\\cdots ');   // 处理 ... 和 …
+            line = line.replace(/≈|\\approx/g, '\\approx ');     // 处理 ≈ 和 ≈
+            line = line.replace(/\\varDelta|\\Delta|\\triangle|△/g, '\\triangle '); // 处理 Δ 和 △
+            line = line.replace(/▽/g, '\\bigtriangledown '); // 处理 ▽
+            line = line.replace(/\\square|\\Box/g, '□'); // 处理 □
+            line = line.replace(/~|\\sim/g, '\\sim '); // 处理 ~ 和 ~
+            line = line.replace(/⊥|\\perp/g, '\\perp '); // 处理 ⊥ 和 ⊥
+            line = line.replace(/∥|\/\\!\//g, '//'); // 处理 ∥
+            line = line.replace(/\\dot/g, '\\overset{\\bullet} '); // 处理 \dot
+            line = line.replace(/π|\\pi/g, '\\mathrm{π} '); // 处理 π
+            line = line.replace(/±|\\pm/g, '\\pm '); // 处理 ± 和 ±
+            line = line.replace(/(\d+)\\mathrm/g, '$1\\ \\mathrm '); // 处理数字后面的 \mathrm
+            line = line.replace(/\\dfrac{m}{mi}n/g, 'm/min '); // 处理 m/min
+            line = line.replace(/\/line/g, '\\overline '); // 处理 /line
+            line = line.replace(/²/g, '^2 '); // 处理 ²
+            line = line.replace(/³/g, '^3 '); // 处理 ³
+            line = line.replace(/♥|♡/g, '\\heartsuit '); // 处理 ♥
+            line = line.replace(/♦|♢/g, '\\diamondsuit '); // 处理 ♦
+            line = line.replace(/♣|♧|♣️/g, '\\clubsuit '); // 处理 ♣
+            line = line.replace(/♠|♤|♠️/g, '\\spadesuit '); // 处理 ♠
+            // 处理希腊字母
+            line = line.replace(/α|\\alpha/g, '\\alpha '); // 处理 \alpha
+            line = line.replace(/β|\\beta/g, '\\beta '); // 处理 \beta
+            line = line.replace(/γ|\\gamma/g, '\\gamma '); // 处理 \gamma
+            line = line.replace(/δ|\\delta/g, '\\delta '); // 处理 \delta
+            line = line.replace(/ε|\\epsilon/g, '\\epsilon '); // 处理 \epsilon
+            line = line.replace(/ζ|\\zeta/g, '\\zeta '); // 处理 \zeta
+            line = line.replace(/η|\\eta/g, '\\eta '); // 处理 \eta
+            line = line.replace(/θ|\\theta/g, '\\theta '); // 处理 \theta
+            line = line.replace(/ι|\\iota/g, '\\iota '); // 处理 \iota
+            line = line.replace(/κ|\\kappa/g, '\\kappa '); // 处理 \kappa
+            line = line.replace(/λ|\\lambda/g, '\\lambda '); // 处理 \lambda
+            line = line.replace(/μ|\\mu/g, '\\mu '); // 处理 \mu
+            line = line.replace(/ν|\\nu/g, '\\nu '); // 处理 \nu
+            line = line.replace(/ξ|\\xi/g, '\\xi '); // 处理 \xi
+            line = line.replace(/ο|\\omicron/g, '\\omicron '); // 处理 \omicron
+            line = line.replace(/ρ|\\rho/g, '\\rho '); // 处理 \rho
+            line = line.replace(/σ|\\sigma/g, '\\sigma '); // 处理 \sigma
+            line = line.replace(/ω|\\omega/g, '\\omega '); // 处理 \omega
+            line = line.replace(/φ|\\phi/g, '\\phi '); // 处理 \phi
+            line = line.replace(/ψ|\\psi/g, '\\psi '); // 处理 \psi
+            line = line.replace(/χ|\\chi/g, '\\chi '); // 处理 \chi
+            // 在其他处理之后处理绝对值
+            line = this.processAbsoluteValue(line);
+            return line;
+        });
+        return processedLines.join('\n');
     },
 
     replaceBrackets(line) {
@@ -881,9 +884,12 @@ const TableProcessor = {
 // 方程处理模块
 const EquationProcessor = {
     denghaochuli(text) {
-        text = text.replace(/＝/g, '&=');
-        text = text.replace(/=/g, '&=');
-        text = text.replace(/&=/g, '&=');
+        // 先将全角等号统一为普通等号
+        text = text.replace(/＝/g, '=');
+        // 只替换不在 & 符号后面的等号，防止 &= 被再次替换
+        text = text.replace(/([^&])=/g, '$1&=');
+        // 处理行首的等号
+        text = text.replace(/^=/gm, '&=');
         return text;
     },
 
@@ -1023,9 +1029,10 @@ function chulifangcheng() {
     inputText = inputText.replace(/&/g, '');
     let latexText = TextToLatex.processTextToLaTeX(inputText);
     let processedText = TextToLatex.processLineBreaks(latexText);
-    let addsplitText = EquationProcessor.addsplit(processedText);
-    let addDollarSignsText = EquationProcessor.addDollarSigns(addsplitText);
-    let finalText = EquationProcessor.denghaochuli(addDollarSignsText);
+    // 先处理等号对齐，再添加 split 环境，最后添加美元符号
+    let equationProcessedText = EquationProcessor.denghaochuli(processedText);
+    let addsplitText = EquationProcessor.addsplit(equationProcessedText);
+    let finalText = EquationProcessor.addDollarSigns(addsplitText);
 
     const output = document.getElementById('outputText');
     output.textContent = finalText;
